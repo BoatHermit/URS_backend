@@ -1,5 +1,0 @@
-spring:
-  application:
-    name: URS_backend
-  profiles:
-    active: dev
