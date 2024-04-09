@@ -1,0 +1,6 @@
+
+spring:
+  application:
+    name: urs-dao
+  profiles:
+    active: dev

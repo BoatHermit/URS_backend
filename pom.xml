@@ -26,8 +26,10 @@
     </properties>
 
     <modules>
+        <module>urs-dao</module>
         <module>urs-recommendation</module>
         <module>urs-service</module>
+        <module>urs-common</module>
     </modules>
 
     <dependencyManagement>
@@ -37,6 +39,14 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.35</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.22</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

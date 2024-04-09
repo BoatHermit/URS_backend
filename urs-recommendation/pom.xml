@@ -9,16 +9,37 @@
     </parent>
 
     <artifactId>urs-recommendation</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>urs-recommendation</name>
-    <description>urs-recommendation</description>
-
-    <properties>
-        <java.version>17</java.version>
-    </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>com.nju</groupId>
+            <artifactId>urs-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nju</groupId>
+            <artifactId>urs-dao</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency
+        >
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
