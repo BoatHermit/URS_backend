@@ -9,10 +9,12 @@ import com.nju.urs.dao.model.po.Admission;
 import com.nju.urs.dao.model.po.SchoolMajor;
 import com.nju.urs.recommendation.model.vo.SimpleAdmission;
 import com.nju.urs.recommendation.service.Recommendation;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RecommendationImpl implements Recommendation {
@@ -59,6 +61,73 @@ public class RecommendationImpl implements Recommendation {
         return map;
     }
 
+    public static double calculateAverage(List<Double> list) {
+        double total = 0;
+
+        // 遍历列表，累加所有元素
+        for (double num : list) {
+            total += num;
+        }
+
+        // 计算平均值
+        return total / list.size();
+    }
+
+    // 计算标准差
+    public static double calculateStdDev(List<Double> numbers) {
+        int n = numbers.size();
+        if (n < 2) {
+            throw new IllegalArgumentException("Standard deviation requires at least two data points");
+        }
+
+        // Step 1: Calculate the mean
+        double mean = calculateAverage(numbers);
+
+        // Step 2: Calculate the sum of squared differences from the mean
+        double squaredDiffSum = 0;
+        for (Double num : numbers) {
+            squaredDiffSum += Math.pow(num - mean, 2);
+        }
+
+        // Step 3: Calculate the variance
+        double variance = squaredDiffSum / (n - 1);
+
+        // Step 4: Calculate the standard deviation
+        return Math.sqrt(variance);
+    }
+
+    // 使用正态分布函数计算考生被录取的概率
+    private double calProbabilityByNormalDistribution(List<Double> ranks, int studentRank) {
+        // 计算过去三年录取最低位次的平均值和标准差
+        double mean = calculateAverage(ranks);
+        double stdDev = calculateStdDev(ranks);
+
+        // 使用正态分布函数计算考生被录取的概率
+        NormalDistribution normalDistribution = new NormalDistribution(mean, stdDev);
+        return 1 - normalDistribution.cumulativeProbability(studentRank);
+    }
+
+    // 简单计算录取概率
+    private double calProbability(List<Double> ranks, int studentRank) {
+        // p-高校近n年内的投档线对应省排名大于目标排名的年份数占比
+        // y-大于目标分数的年份数量
+        // n-总年份
+        int p = 0, y = 0, n = 0;
+
+        // d-高校投档线对应省排名的标准差
+        double d = 0;
+        double s = calculateAverage(ranks);
+        for (double rank : ranks) {
+            n++;
+            if (rank > studentRank) {
+                y++;
+            }
+            d = d + Math.pow(((rank - s)/s), 2);
+        }
+        p = y / n;
+
+        return p * 0.88 + (1 - d) * 0.12;
+    }
 
     @Override
     public List<RecommendedResult> recommend(StudentInfo studentInfo) {
@@ -69,34 +138,21 @@ public class RecommendationImpl implements Recommendation {
         for (SchoolMajor schoolMajor : map.keySet()) {
             List<SimpleAdmission> admissions = map.get(schoolMajor);
 
-            // p-高校近n年内的投档线对应省排名大于目标排名的年份数占比
-            // y-大于目标分数的年份数量
-            // n-总年份
-            int p = 0, y = 0, n = 0;
+            List<Double> ranks = admissions.stream()
+                    .map(obj -> (double) ((SimpleAdmission) obj).getRank())
+                    .collect(Collectors.toList());
 
-            // d-高校投档线对应省排名的标准差
-            double d = 0;
-            double s = admissions.stream().mapToInt(SimpleAdmission::getRank).average().getAsDouble();
-            for (SimpleAdmission admission : admissions) {
-                n++;
-                if (admission.getRank() > studentInfo.getRank()) {
-                    y++;
-                }
-                d = d + Math.pow(((admission.getRank() - s)/s), 2);
-            }
-            p = y / n;
 
-            double rate = p * 0.88 + (1 - d) * 0.12;
+            double admissionProbability = calProbabilityByNormalDistribution(ranks, studentInfo.getRank());
 
             RecommendedResult result = new RecommendedResult();
             result.setSchoolId(schoolMajor.getSchoolId());
             result.setMajorId(schoolMajor.getMajorId());
             result.setMajorName(schoolMajor.getMajorName());
-            result.setAdmissionRate(rate);
+            result.setAdmissionRate(admissionProbability);
             result.setSchoolName(schoolMapper.selectById(schoolMajor.getSchoolId()).getName());
             results.add(result);
         }
-
         return results;
     }
 }

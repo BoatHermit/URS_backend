@@ -40,6 +40,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version> <!-- 或者你需要的其他版本 -->
+        </dependency>
     </dependencies>
 
 </project>
