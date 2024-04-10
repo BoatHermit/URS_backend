@@ -8,5 +8,5 @@ public class RecommendedResult {
     private String schoolName;
     private int majorId;
     private String majorName;
-    private double admissionRate;
+    private double admissionProbability;
 }

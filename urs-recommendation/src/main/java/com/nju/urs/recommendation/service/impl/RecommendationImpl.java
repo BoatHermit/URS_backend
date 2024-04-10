@@ -7,6 +7,7 @@ import com.nju.urs.dao.mapper.SchoolMajorMapper;
 import com.nju.urs.dao.mapper.SchoolMapper;
 import com.nju.urs.dao.model.po.Admission;
 import com.nju.urs.dao.model.po.SchoolMajor;
+import com.nju.urs.recommendation.model.dto.RecommendedResults;
 import com.nju.urs.recommendation.model.vo.SimpleAdmission;
 import com.nju.urs.recommendation.service.Recommendation;
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -130,8 +131,7 @@ public class RecommendationImpl implements Recommendation {
     }
 
     @Override
-    public List<RecommendedResult> recommend(StudentInfo studentInfo) {
-
+    public List<RecommendedResult> allRecommend(StudentInfo studentInfo) {
         List<RecommendedResult> results = new ArrayList<>();
         Map<SchoolMajor, List<SimpleAdmission>> map = Preprocessing(studentInfo);
 
@@ -149,10 +149,33 @@ public class RecommendationImpl implements Recommendation {
             result.setSchoolId(schoolMajor.getSchoolId());
             result.setMajorId(schoolMajor.getMajorId());
             result.setMajorName(schoolMajor.getMajorName());
-            result.setAdmissionRate(admissionProbability);
+            result.setAdmissionProbability(admissionProbability);
             result.setSchoolName(schoolMapper.selectById(schoolMajor.getSchoolId()).getName());
             results.add(result);
         }
         return results;
+    }
+
+    @Override
+    public RecommendedResults recommend(StudentInfo studentInfo) {
+        List<RecommendedResult> results = allRecommend(studentInfo);
+        RecommendedResults recommendedResults = new RecommendedResults();
+        List<RecommendedResult> highRisk = new ArrayList<>();
+        List<RecommendedResult> mediumRisk = new ArrayList<>();
+        List<RecommendedResult> lowRisk = new ArrayList<>();
+        for (RecommendedResult result : results) {
+            if (result.getAdmissionProbability() < 0.5) {
+                highRisk.add(result);
+            } else if (result.getAdmissionProbability() > 0.8) {
+                lowRisk.add(result);
+            } else {
+                mediumRisk.add(result);
+            }
+        }
+        recommendedResults.setHighRisk(highRisk);
+        recommendedResults.setMediumRisk(mediumRisk);
+        recommendedResults.setLowRisk(lowRisk);
+
+        return recommendedResults;
     }
 }
