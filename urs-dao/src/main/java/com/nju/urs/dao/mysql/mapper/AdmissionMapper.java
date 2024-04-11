@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface AdmissionMapper extends BaseMapper<Admission> {
 
-    List<Admission> selectByProvince(String province);
+    List<Admission> findByProvince(String province);
 }

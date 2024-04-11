@@ -1,10 +1,11 @@
 package com.nju.urs.recommendation.service.impl;
 
+import com.nju.urs.dao.mongo.model.po.School;
+import com.nju.urs.dao.mysql.mapper.SchoolCodeMapper;
 import com.nju.urs.recommendation.model.dto.RecommendedResult;
 import com.nju.urs.common.model.dto.StudentInfo;
 import com.nju.urs.dao.mysql.mapper.AdmissionMapper;
 import com.nju.urs.dao.mysql.mapper.SchoolMajorMapper;
-import com.nju.urs.dao.mongo.mapper.SchoolMapper;
 import com.nju.urs.dao.mysql.model.po.Admission;
 import com.nju.urs.dao.mysql.model.po.SchoolMajor;
 import com.nju.urs.recommendation.model.dto.RecommendedResults;
@@ -21,30 +22,32 @@ import java.util.stream.Collectors;
 public class RecommendationImpl implements Recommendation {
 
     AdmissionMapper admissionMapper;
-    SchoolMapper schoolMapper;
+    SchoolCodeMapper schoolCodeMapper;
     SchoolMajorMapper schoolMajorMapper;
 
     @Autowired
     public RecommendationImpl(SchoolMajorMapper schoolMajorMapper,
-                              SchoolMapper schoolMapper, AdmissionMapper admissionMapper) {
+                              SchoolCodeMapper schoolCodeMapper, AdmissionMapper admissionMapper) {
         this.schoolMajorMapper = schoolMajorMapper;
-        this.schoolMapper = schoolMapper;
+        this.schoolCodeMapper = schoolCodeMapper;
         this.admissionMapper = admissionMapper;
     }
 
     private boolean checkSubjects(String subjects, String requirement) {
+        boolean result = true;
         for (int i = 0; i < subjects.length(); i++) {
             if (requirement.charAt(i) == '1' && subjects.charAt(i) == '0') {
-                return false;
+                result = false;
+                break;
             }
         }
-        return true;
+        return result;
     }
 
     private Map<SchoolMajor, List<SimpleAdmission>> Preprocessing(StudentInfo studentInfo) {
         Map<SchoolMajor, List<SimpleAdmission>> map = new HashMap<>();
 
-        List<Admission> admissions = admissionMapper.selectByProvince(studentInfo.getProvince());
+        List<Admission> admissions = admissionMapper.findByProvince(studentInfo.getProvince());
         for (Admission admission : admissions) {
             SchoolMajor schoolMajor = schoolMajorMapper.findBySchoolIdAndMajorId(
                     admission.getSchoolId(), admission.getMajorId());
@@ -175,7 +178,8 @@ public class RecommendationImpl implements Recommendation {
             result.setMajorId(schoolMajor.getMajorId());
             result.setMajorName(schoolMajor.getMajorName());
             result.setAdmissionProbability(admissionProbability);
-            result.setSchoolName(schoolMapper.selectById(schoolMajor.getSchoolId()).getSchoolName());
+            result.setSchoolName(schoolCodeMapper.selectById(String.valueOf(schoolMajor.getSchoolId()))
+                    .getName());
             results.add(result);
         }
         return results;

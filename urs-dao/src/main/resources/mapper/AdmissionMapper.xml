@@ -4,7 +4,7 @@
 
 <mapper namespace="com.nju.urs.dao.mysql.mapper.AdmissionMapper">
 
-    <select id="selectByProvince" resultType="com.nju.urs.dao.mysql.model.po.Admission">
-        select * from admissions where province=#{province};
+    <select id="findByProvince" resultType="com.nju.urs.dao.mysql.model.po.Admission">
+        select * from admissions where province=#{province}
     </select>
 </mapper>

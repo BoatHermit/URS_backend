@@ -1,5 +1,6 @@
 package com.nju.urs.dao.mysql.model.po;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.util.Objects;
 
 @Data
 @AllArgsConstructor
+@TableName("school_major")
 public class SchoolMajor implements Serializable {
     private int schoolId;
     private int majorId;

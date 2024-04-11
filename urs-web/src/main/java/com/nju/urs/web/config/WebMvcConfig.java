@@ -1,4 +1,4 @@
-package com.nju.urs.service.config;
+package com.nju.urs.web.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

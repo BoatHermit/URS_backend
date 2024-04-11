@@ -1,4 +1,4 @@
-package com.nju.urs.service.controller;
+package com.nju.urs.web.controller;
 
 import com.nju.urs.common.utils.Result;
 import com.nju.urs.service.service.SchoolService;

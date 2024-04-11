@@ -1,4 +1,4 @@
-package com.nju.urs.service;
+package com.nju.urs.web;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -7,13 +7,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@MapperScan("com.nju.urs.dao.mysql")
-@EnableMongoRepositories(basePackages = {"com.nju.urs.dao.mongo"})
+@MapperScan("com.nju.urs.dao.mysql.mapper")
+@EnableMongoRepositories(basePackages = {"com.nju.urs.dao.mongo.mapper"})
 @ComponentScan("com.nju.urs")
-public class UrsServiceApplication {
+public class UrsWebApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(UrsServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(UrsWebApplication.class, args);
+    }
 
 }
