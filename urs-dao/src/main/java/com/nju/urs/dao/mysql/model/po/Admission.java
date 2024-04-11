@@ -1,4 +1,4 @@
-package com.nju.urs.dao.model.po;
+package com.nju.urs.dao.mysql.model.po;
 
 import lombok.Data;
 

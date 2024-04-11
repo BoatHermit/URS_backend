@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface Recommendation {
 
-    public List<RecommendedResult> allRecommend(StudentInfo studentInfo);
+    List<RecommendedResult> allRecommend(StudentInfo studentInfo);
 
-    public RecommendedResults recommend(StudentInfo studentInfo);
+    RecommendedResults recommend(StudentInfo studentInfo);
 
 }

@@ -1,12 +1,10 @@
-package com.nju.urs.dao.mapper;
+package com.nju.urs.dao.mysql.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.nju.urs.dao.model.po.SchoolMajor;
+import com.nju.urs.dao.mysql.model.po.SchoolMajor;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface SchoolMajorMapper extends BaseMapper<SchoolMajor> {
-    SchoolMajor selectBySchoolIdAndMajorId(int schoolId, int majorId);
+    SchoolMajor findBySchoolIdAndMajorId(int schoolId, int majorId);
 }

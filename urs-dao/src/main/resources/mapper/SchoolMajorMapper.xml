@@ -2,9 +2,9 @@
 <!--MyBatis配置文件-->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.nju.urs.dao.mapper.SchoolMajorMapper">
+<mapper namespace="com.nju.urs.dao.mysql.mapper.SchoolMajorMapper">
 
-    <select id="selectBySchoolIdAndMajorId" resultType="com.nju.urs.dao.model.po.SchoolMajor">
+    <select id="findBySchoolIdAndMajorId" resultType="com.nju.urs.dao.mysql.model.po.SchoolMajor">
         select * from school_major where school_id=#{schoolId} and major_id=#{majorId}
     </select>
 </mapper>

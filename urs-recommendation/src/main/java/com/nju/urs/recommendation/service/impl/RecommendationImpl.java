@@ -2,11 +2,11 @@ package com.nju.urs.recommendation.service.impl;
 
 import com.nju.urs.recommendation.model.dto.RecommendedResult;
 import com.nju.urs.common.model.dto.StudentInfo;
-import com.nju.urs.dao.mapper.AdmissionMapper;
-import com.nju.urs.dao.mapper.SchoolMajorMapper;
-import com.nju.urs.dao.mapper.SchoolMapper;
-import com.nju.urs.dao.model.po.Admission;
-import com.nju.urs.dao.model.po.SchoolMajor;
+import com.nju.urs.dao.mysql.mapper.AdmissionMapper;
+import com.nju.urs.dao.mysql.mapper.SchoolMajorMapper;
+import com.nju.urs.dao.mongo.mapper.SchoolMapper;
+import com.nju.urs.dao.mysql.model.po.Admission;
+import com.nju.urs.dao.mysql.model.po.SchoolMajor;
 import com.nju.urs.recommendation.model.dto.RecommendedResults;
 import com.nju.urs.recommendation.model.vo.SimpleAdmission;
 import com.nju.urs.recommendation.service.Recommendation;
@@ -46,7 +46,7 @@ public class RecommendationImpl implements Recommendation {
 
         List<Admission> admissions = admissionMapper.selectByProvince(studentInfo.getProvince());
         for (Admission admission : admissions) {
-            SchoolMajor schoolMajor = schoolMajorMapper.selectBySchoolIdAndMajorId(
+            SchoolMajor schoolMajor = schoolMajorMapper.findBySchoolIdAndMajorId(
                     admission.getSchoolId(), admission.getMajorId());
             if (checkSubjects(studentInfo.getSubjects(), schoolMajor.getSubjects())) {
                 if (!map.containsKey(schoolMajor)) {
@@ -175,7 +175,7 @@ public class RecommendationImpl implements Recommendation {
             result.setMajorId(schoolMajor.getMajorId());
             result.setMajorName(schoolMajor.getMajorName());
             result.setAdmissionProbability(admissionProbability);
-            result.setSchoolName(schoolMapper.selectById(schoolMajor.getSchoolId()).getName());
+            result.setSchoolName(schoolMapper.selectById(schoolMajor.getSchoolId()).getSchoolName());
             results.add(result);
         }
         return results;

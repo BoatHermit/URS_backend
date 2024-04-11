@@ -1,7 +1,7 @@
-package com.nju.urs.dao.mapper;
+package com.nju.urs.dao.mysql.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.nju.urs.dao.model.po.Admission;
+import com.nju.urs.dao.mysql.model.po.Admission;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
