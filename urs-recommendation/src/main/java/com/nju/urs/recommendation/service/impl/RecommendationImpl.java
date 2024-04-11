@@ -97,15 +97,40 @@ public class RecommendationImpl implements Recommendation {
         return Math.sqrt(variance);
     }
 
+    // 正态分布，使用最小值作为 mu，计算 delta
+    public static double calculateDelta(List<Double> numbers) {
+        int n = numbers.size();
+        if (n < 2) {
+            throw new IllegalArgumentException("Standard deviation requires at least two data points");
+        }
+
+        // Step 1: 以最低录取位次为 mu
+        double mu = numbers.stream().max(Double::compare).orElse(Double.NaN);
+
+        // Step 2: Calculate the sum of squared differences from the mean
+        double squaredDiffSum = 0;
+        for (Double num : numbers) {
+            squaredDiffSum += Math.pow(num - mu, 2);
+        }
+
+        // Step 3: Calculate the variance
+        double variance = squaredDiffSum / (n - 1);
+
+        // Step 4: Calculate the standard deviation
+        return Math.sqrt(variance);
+    }
+
     // 使用正态分布函数计算考生被录取的概率
-    private double calProbabilityByNormalDistribution(List<Double> ranks, int studentRank) {
+    public static double calProbabilityByNormalDistribution(List<Double> ranks, int studentRank) {
         // 计算过去三年录取最低位次的平均值和标准差
-        double mean = calculateAverage(ranks);
-        double stdDev = calculateStdDev(ranks);
+        double mu = ranks.stream().max(Double::compare).orElse(Double.NaN);
+        double delta = calculateDelta(ranks);
 
         // 使用正态分布函数计算考生被录取的概率
-        NormalDistribution normalDistribution = new NormalDistribution(mean, stdDev);
-        return 1 - normalDistribution.cumulativeProbability(studentRank);
+        NormalDistribution normalDistribution = new NormalDistribution(mu, delta);
+
+        return 1 - normalDistribution.cumulativeProbability(studentRank)
+                + normalDistribution.density(studentRank);
     }
 
     // 简单计算录取概率
