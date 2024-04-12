@@ -20,8 +20,8 @@
             <groupId>com.nju</groupId>
             <artifactId>urs-dao</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency
-        >
+        </dependency>
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -31,19 +31,9 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version> <!-- 或者你需要的其他版本 -->
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
 

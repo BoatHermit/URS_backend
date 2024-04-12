@@ -1,6 +1,5 @@
 package com.nju.urs.recommendation.service.impl;
 
-import com.nju.urs.dao.mongo.model.po.School;
 import com.nju.urs.dao.mysql.mapper.SchoolCodeMapper;
 import com.nju.urs.recommendation.model.dto.RecommendedResult;
 import com.nju.urs.common.model.dto.StudentInfo;
