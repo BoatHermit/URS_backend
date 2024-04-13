@@ -14,6 +14,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ public class RecommendationImpl implements Recommendation {
     SchoolCodeMapper schoolCodeMapper;
     SchoolMajorMapper schoolMajorMapper;
 
+
     @Autowired
     public RecommendationImpl(SchoolMajorMapper schoolMajorMapper,
                               SchoolCodeMapper schoolCodeMapper, AdmissionMapper admissionMapper) {
@@ -31,6 +33,7 @@ public class RecommendationImpl implements Recommendation {
         this.schoolCodeMapper = schoolCodeMapper;
         this.admissionMapper = admissionMapper;
     }
+
 
     private boolean checkSubjects(String subjects, String requirement) {
         boolean result = true;
@@ -43,7 +46,8 @@ public class RecommendationImpl implements Recommendation {
         return result;
     }
 
-    private Map<SchoolMajor, List<SimpleAdmission>> Preprocessing(StudentInfo studentInfo) {
+
+    private Map<SchoolMajor, List<SimpleAdmission>> preprocessing(StudentInfo studentInfo) {
         Map<SchoolMajor, List<SimpleAdmission>> map = new HashMap<>();
 
         List<Admission> admissions = admissionMapper.findByProvince(studentInfo.getProvince());
@@ -64,50 +68,42 @@ public class RecommendationImpl implements Recommendation {
         return map;
     }
 
-    public static double calculateAverage(List<Double> list) {
-        double total = 0;
 
-        // 遍历列表，累加所有元素
-        for (double num : list) {
-            total += num;
+    /**
+     * 二次指数平滑法求预测值
+     * @param list 数据集合
+     * @param n 未来第几期
+     * @param modulus 平滑系数
+     * @return 预测值
+     */
+    public Double predictByES(List<Double> list, int n, Double modulus) {
+        if (modulus <= 0 || modulus >= 1) {
+            return null;
         }
-
-        // 计算平均值
-        return total / list.size();
+        Double modulusLeft = 1 - modulus;
+        Double lastIndex = list.get(0);
+        Double lastSecIndex = list.get(0);
+        for (Double data :list) {
+            lastIndex = modulus * data + modulusLeft * lastIndex;
+            lastSecIndex = modulus * lastIndex + modulusLeft * lastSecIndex;
+        }
+        double a = 2 * lastIndex - lastSecIndex;
+        double b = (modulus / modulusLeft) * (lastIndex - lastSecIndex);
+        return a + b * n;
     }
 
-    // 计算标准差
-    public static double calculateStdDev(List<Double> numbers) {
+
+    /**
+     * 计算正态分布中的 delta
+     * @param mu mu
+     * @param numbers 数据
+     * @return delta
+     */
+    public double calculateDelta(double mu, List<Double> numbers) {
         int n = numbers.size();
         if (n < 2) {
             throw new IllegalArgumentException("Standard deviation requires at least two data points");
         }
-
-        // Step 1: Calculate the mean
-        double mean = calculateAverage(numbers);
-
-        // Step 2: Calculate the sum of squared differences from the mean
-        double squaredDiffSum = 0;
-        for (Double num : numbers) {
-            squaredDiffSum += Math.pow(num - mean, 2);
-        }
-
-        // Step 3: Calculate the variance
-        double variance = squaredDiffSum / (n - 1);
-
-        // Step 4: Calculate the standard deviation
-        return Math.sqrt(variance);
-    }
-
-    // 正态分布，使用最小值作为 mu，计算 delta
-    public static double calculateDelta(List<Double> numbers) {
-        int n = numbers.size();
-        if (n < 2) {
-            throw new IllegalArgumentException("Standard deviation requires at least two data points");
-        }
-
-        // Step 1: 以最低录取位次为 mu
-        double mu = numbers.stream().max(Double::compare).orElse(Double.NaN);
 
         // Step 2: Calculate the sum of squared differences from the mean
         double squaredDiffSum = 0;
@@ -122,55 +118,54 @@ public class RecommendationImpl implements Recommendation {
         return Math.sqrt(variance);
     }
 
-    // 使用正态分布函数计算考生被录取的概率
-    public static double calProbabilityByNormalDistribution(List<Double> ranks, int studentRank) {
-        // 计算过去三年录取最低位次的平均值和标准差
-        double mu = ranks.stream().max(Double::compare).orElse(Double.NaN);
-        double delta = calculateDelta(ranks);
+    private static double sigmoid(double x) {
+        double k = Math.PI;
+        return 1.0 / (1 + Math.exp(-k*(x-0.5)));
+    }
+
+
+    /**
+     * 使用正态分布函数计算考生被录取的概率
+     * @param ranks 历史录取最低位次
+     * @param studentRank 考生位次
+     * @return 录取概率
+     */
+    public double calculateProbabilityByND(List<Double> ranks, int studentRank) {
+        // 以最低位次为 mu
+        // double mu = ranks.stream().max(Double::compare).orElse(Double.NaN);
+        double prediction = predictByES(ranks,1, 0.5);
+        // ranks.add(prediction);
+        double delta = calculateDelta(prediction, ranks);
 
         // 使用正态分布函数计算考生被录取的概率
-        NormalDistribution normalDistribution = new NormalDistribution(mu, delta);
-
-        return 1 - normalDistribution.cumulativeProbability(studentRank)
+        NormalDistribution normalDistribution = new NormalDistribution(prediction, delta);
+        double probability = 1 - normalDistribution.cumulativeProbability(studentRank)
                 + normalDistribution.density(studentRank);
+        probability = sigmoid(probability);
+        // 创建 DecimalFormat 对象，并指定保留两位小数的格式
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+        // 使用 DecimalFormat 格式化 Double 数值
+        probability = Double.parseDouble(decimalFormat.format(probability));
+        return probability;
     }
 
-    // 简单计算录取概率
-    private double calProbability(List<Double> ranks, int studentRank) {
-        // p-高校近n年内的投档线对应省排名大于目标排名的年份数占比
-        // y-大于目标分数的年份数量
-        // n-总年份
-        int p = 0, y = 0, n = 0;
-
-        // d-高校投档线对应省排名的标准差
-        double d = 0;
-        double s = calculateAverage(ranks);
-        for (double rank : ranks) {
-            n++;
-            if (rank > studentRank) {
-                y++;
-            }
-            d = d + Math.pow(((rank - s)/s), 2);
-        }
-        p = y / n;
-
-        return p * 0.88 + (1 - d) * 0.12;
-    }
 
     @Override
     public List<RecommendedResult> allRecommend(StudentInfo studentInfo) {
         List<RecommendedResult> results = new ArrayList<>();
-        Map<SchoolMajor, List<SimpleAdmission>> map = Preprocessing(studentInfo);
+        Map<SchoolMajor, List<SimpleAdmission>> map = preprocessing(studentInfo);
 
         for (SchoolMajor schoolMajor : map.keySet()) {
             List<SimpleAdmission> admissions = map.get(schoolMajor);
+            Collections.sort(admissions);
 
             List<Double> ranks = admissions.stream()
                     .map(obj -> (double) ((SimpleAdmission) obj).getRank())
                     .collect(Collectors.toList());
 
 
-            double admissionProbability = calProbabilityByNormalDistribution(ranks, studentInfo.getRank());
+            double admissionProbability = calculateProbabilityByND(ranks, studentInfo.getRank());
 
             RecommendedResult result = new RecommendedResult();
             result.setSchoolId(schoolMajor.getSchoolId());
@@ -184,6 +179,7 @@ public class RecommendationImpl implements Recommendation {
         return results;
     }
 
+
     @Override
     public RecommendedResults recommend(StudentInfo studentInfo) {
         List<RecommendedResult> results = allRecommend(studentInfo);
@@ -192,7 +188,7 @@ public class RecommendationImpl implements Recommendation {
         List<RecommendedResult> mediumRisk = new ArrayList<>();
         List<RecommendedResult> lowRisk = new ArrayList<>();
         for (RecommendedResult result : results) {
-            if (result.getAdmissionProbability() < 0.5) {
+            if (result.getAdmissionProbability() < 0.3) {
                 highRisk.add(result);
             } else if (result.getAdmissionProbability() > 0.8) {
                 lowRisk.add(result);
