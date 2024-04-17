@@ -8,6 +8,7 @@ import lombok.Data;
 public class RegisterVO {
     private String phone;
     private String pwd;
+    private String name;
 
     public UserPO UserPO(){
         UserPO userPO = new UserPO();
