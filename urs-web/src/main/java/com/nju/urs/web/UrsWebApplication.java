@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @MapperScan("com.nju.urs.dao.mysql.mapper")
-@EnableMongoRepositories(basePackages = {"com.nju.urs.dao.mongo.mapper"})
+@EnableMongoRepositories(basePackages = {"com.nju.urs.dao.mongo.mapper", "com.nju.urs.user.repository"})
 @ComponentScan("com.nju.urs")
 public class UrsWebApplication {
 
