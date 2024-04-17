@@ -52,8 +52,10 @@ public class School {
     @Field("city_name")
     private String cityName;
 
+    @Field("f211")
     private String f211;
 
+    @Field("f985")
     private String f985;
 
     @Field("level_name")
@@ -75,7 +77,7 @@ public class School {
     private String schoolTypeName;
 
     @Field("dual_class_name")
-    private String dualClassname;
+    private String dualClassName;
 
     @Field("dualclass")
     private List<DualClass> dualClass;
