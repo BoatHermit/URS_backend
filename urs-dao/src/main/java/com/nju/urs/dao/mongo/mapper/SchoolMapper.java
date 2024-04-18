@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SchoolMapper extends MongoRepository<School, String> {
+public interface SchoolMapper extends MongoRepository<School, String>, CustomizedSchoolMapper {
 
     @Query(value = "{}",fields = "{ 'school_id' : 1, 'school_name' : 1, 'province_name' : 1, 'school_type_name' : 1, " +
             "'type_name' : 1, 'nature_name' : 1, 'f985' : 1, 'f211' : 1, 'dual_class_name' : 1 }")

@@ -11,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,12 +19,10 @@ import java.util.List;
 @Service
 public class SchoolServiceImpl implements SchoolService {
     SchoolMapper schoolMapper;
-    MongoTemplate mongoTemplate;
 
     @Autowired
-    public SchoolServiceImpl(SchoolMapper schoolMapper, MongoTemplate mongoTemplate) {
+    public SchoolServiceImpl(SchoolMapper schoolMapper) {
         this.schoolMapper = schoolMapper;
-        this.mongoTemplate = mongoTemplate;
     }
 
 
@@ -72,36 +67,26 @@ public class SchoolServiceImpl implements SchoolService {
         return simpleSchools;
     }
 
-    private void addCondition(Query query, String fieldName, String value) {
-        if (value != null && !value.isEmpty()) {
-            query.addCriteria(Criteria.where(fieldName).is(value));
-        }
-    }
+    private School wrapConditions(SchoolConditions conditions) {
+        School school = new School();
+        school.setProvinceName(conditions.getProvinceName());
+        school.setTypeName(conditions.getTypeName());
+        school.setLevelName(conditions.getLevelName());
+        school.setNatureName(conditions.getNatureName());
+        school.setF211(conditions.getF211());
+        school.setF985(conditions.getF985());
+        school.setDualClassName(conditions.getDualClassName());
+        school.setBelong(conditions.getBelong());
 
-    private Query getSchoolQuery(SchoolConditions conditions) {
-        Query query = new Query();
-        if (conditions != null) {
-            addCondition(query, "province_name", conditions.getProvinceName());
-            addCondition(query, "type_name", conditions.getTypeName());
-            addCondition(query, "level_name", conditions.getLevelName());
-            addCondition(query, "nature_name", conditions.getNatureName());
-            addCondition(query, "f211", conditions.getF211());
-            addCondition(query, "f985", conditions.getF985());
-            addCondition(query, "dual_class_name", conditions.getDualClassName());
-            addCondition(query, "belong", conditions.getBelong());
-        }
-        return query;
+        return school;
     }
 
     @Override
     public List<SimpleSchool> getSchoolsPage(SchoolFilterParam param) {
-        Query query = getSchoolQuery(param.getConditions());
-        Integer pageNo = param.getPageNo();
-        Integer pageSize = param.getPageSize();
-        Pageable pageable = PageRequest.of(pageNo != null ? pageNo-1 : 0, pageSize != null ? pageSize : 10);
-        query.with(pageable);
+        School querySchool = wrapConditions(param.getConditions());
 
-        List<School> schools = mongoTemplate.find(query, School.class);
+        List<School> schools = schoolMapper.findSchoolByConditions(
+                param.getPageNo()-1, param.getPageSize(), querySchool);
         List<SimpleSchool> simpleSchools = new ArrayList<>();
         for (School school : schools) {
             SimpleSchool simpleSchool = new SimpleSchool(school);
@@ -113,8 +98,9 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public Integer countSchoolsPage(SchoolFilterParam param) {
-        Query query = getSchoolQuery(param.getConditions());
-        double num = mongoTemplate.count(query, School.class);
+        School querySchool = wrapConditions(param.getConditions());
+        double num = schoolMapper.countSchoolByConditions(
+                param.getPageNo()-1, param.getPageSize(), querySchool);
         return (int) Math.ceil(num / param.getPageSize());
     }
 }
