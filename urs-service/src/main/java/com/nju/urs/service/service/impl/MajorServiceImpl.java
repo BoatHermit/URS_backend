@@ -4,6 +4,7 @@ import com.nju.urs.common.utils.QueryUtils;
 import com.nju.urs.dao.mongo.mapper.MajorInfoMapper;
 import com.nju.urs.dao.mongo.mapper.MajorMapper;
 import com.nju.urs.dao.mongo.model.po.Major;
+import com.nju.urs.dao.mongo.model.po.MajorInfo;
 import com.nju.urs.service.model.param.MajorFilterParam;
 import com.nju.urs.service.model.param.MajorSearchParam;
 import com.nju.urs.service.model.vo.CompleteMajor;
@@ -30,8 +31,9 @@ public class MajorServiceImpl implements MajorService {
     }
 
     @Override
-    public CompleteMajor getMajorById(String id) {
-        return null;
+    public CompleteMajor getMajorByCode(String code) {
+        MajorInfo major = majorInfoMapper.findOneByCode(code);
+        return new CompleteMajor(major);
     }
 
     @Override

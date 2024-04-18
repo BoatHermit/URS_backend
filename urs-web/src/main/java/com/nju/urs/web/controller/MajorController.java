@@ -5,10 +5,7 @@ import com.nju.urs.service.model.param.MajorFilterParam;
 import com.nju.urs.service.model.param.MajorSearchParam;
 import com.nju.urs.service.service.MajorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/majors")
@@ -30,9 +27,9 @@ public class MajorController {
         return Result.success(majorService.countPagesByConditions(param));
     }
 
-    @GetMapping("/id")
-    public Result getById(String id) {
-        return Result.success(majorService.getMajorById(id));
+    @GetMapping("/code")
+    public Result getByCode(@RequestParam String code) {
+        return Result.success(majorService.getMajorByCode(code));
     }
 
     @GetMapping("/search")

@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MajorInfoMapper extends MongoRepository<MajorInfo,String> {
+
+    MajorInfo findOneByCode(String code);
 }
