@@ -27,11 +27,11 @@ public class SchoolController {
 
     @GetMapping("/filter")
     public Result filter(@RequestBody SchoolFilterParam param) {
-        return Result.success(schoolService.getSchoolsPage(param));
+        return Result.success(schoolService.getSchoolsByConditions(param));
     }
     @GetMapping("/filter/count")
     public Result filterCount(@RequestBody SchoolFilterParam param) {
-        return Result.success(schoolService.countSchoolsPage(param));
+        return Result.success(schoolService.countPagesByConditions(param));
     }
 
 
@@ -42,6 +42,6 @@ public class SchoolController {
 
     @GetMapping("/search")
     public Result getByFuzzyName(String fuzzyName) {
-        return Result.success(schoolService.getSchoolsByFuzzyName(fuzzyName));
+        return Result.success(schoolService.getSchoolsByKeywords(fuzzyName));
     }
 }

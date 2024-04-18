@@ -1,6 +1,5 @@
 package com.nju.urs.service.service;
 
-import com.nju.urs.dao.mongo.model.po.School;
 import com.nju.urs.service.model.param.SchoolFilterParam;
 import com.nju.urs.service.model.vo.CompleteSchool;
 import com.nju.urs.service.model.vo.SimpleSchool;
@@ -13,7 +12,7 @@ public interface SchoolService {
     Integer countPage(int pageSize);
 
     CompleteSchool getSchoolById(String id);
-    List<SimpleSchool> getSchoolsByFuzzyName(String fuzzyName);
-    List<SimpleSchool> getSchoolsPage(SchoolFilterParam param);
-    Integer countSchoolsPage(SchoolFilterParam param);
+    List<SimpleSchool> getSchoolsByKeywords(String fuzzyName);
+    List<SimpleSchool> getSchoolsByConditions(SchoolFilterParam param);
+    Integer countPagesByConditions(SchoolFilterParam param);
 }

@@ -1,5 +1,6 @@
 package com.nju.urs.dao.mongo.mapper.impl;
 
+import com.nju.urs.common.utils.FuzzySearch;
 import com.nju.urs.dao.mongo.mapper.CustomizedSchoolMapper;
 import com.nju.urs.dao.mongo.model.po.School;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
         }
     }
 
-    private Query getSchoolQuery(School conditions) {
+    private Query getSchoolQuery(School conditions, String keyword) {
         Query query = new Query();
         if (conditions != null) {
             addCondition(query, "province_name", conditions.getProvinceName());
@@ -40,23 +41,27 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
             addCondition(query, "dual_class_name", conditions.getDualClassName());
             addCondition(query, "belong", conditions.getBelong());
         }
+        String regex = FuzzySearch.getRegex(keyword);
+        Criteria criteria = new Criteria().orOperator(
+                Criteria.where("school_name").regex(regex, "i")
+        );
+        query.addCriteria(criteria);
         return query;
     }
 
     @Override
-    public List<School> findSchoolByConditions(int pageNo, int pageSize, School school) {
-        Query query = getSchoolQuery(school);
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
+    public List<School> findByConditions(int pageNo, int pageSize, School school, String keyword) {
+        Query query = getSchoolQuery(school, keyword);
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize);
         query.with(pageable);
 
         return mongoTemplate.find(query, School.class);
     }
 
     @Override
-    public Integer countSchoolByConditions(int pageNo, int pageSize, School school) {
-        Query query = getSchoolQuery(school);
-        double num = mongoTemplate.count(query, School.class);
-        return (int) Math.ceil(num / pageSize);
+    public Integer countByConditions(School school, String keyword) {
+        Query query = getSchoolQuery(school, keyword);
+        return (int) mongoTemplate.count(query, School.class);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.nju.urs.service.model.param;
+package com.nju.urs.service.model.vo;
 
 import lombok.Data;
 

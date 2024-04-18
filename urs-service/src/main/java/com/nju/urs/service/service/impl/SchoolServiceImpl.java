@@ -1,7 +1,7 @@
 package com.nju.urs.service.service.impl;
 
 import com.nju.urs.dao.mongo.model.po.School;
-import com.nju.urs.service.model.param.SchoolConditions;
+import com.nju.urs.service.model.vo.SchoolConditions;
 import com.nju.urs.service.model.param.SchoolFilterParam;
 import com.nju.urs.service.model.vo.CompleteSchool;
 import com.nju.urs.service.model.vo.SimpleSchool;
@@ -51,7 +51,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public List<SimpleSchool> getSchoolsByFuzzyName(String fuzzyName) {
+    public List<SimpleSchool> getSchoolsByKeywords(String fuzzyName) {
         StringBuilder regex = new StringBuilder("(?:");
         String[] strings = fuzzyName.split(" ");
         for (String string : strings) {
@@ -82,11 +82,11 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public List<SimpleSchool> getSchoolsPage(SchoolFilterParam param) {
+    public List<SimpleSchool> getSchoolsByConditions(SchoolFilterParam param) {
         School querySchool = wrapConditions(param.getConditions());
 
-        List<School> schools = schoolMapper.findSchoolByConditions(
-                param.getPageNo()-1, param.getPageSize(), querySchool);
+        List<School> schools = schoolMapper.findByConditions(
+                param.getPageNo(), param.getPageSize(), querySchool, param.getKeyword());
         List<SimpleSchool> simpleSchools = new ArrayList<>();
         for (School school : schools) {
             SimpleSchool simpleSchool = new SimpleSchool(school);
@@ -97,10 +97,9 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    public Integer countSchoolsPage(SchoolFilterParam param) {
+    public Integer countPagesByConditions(SchoolFilterParam param) {
         School querySchool = wrapConditions(param.getConditions());
-        double num = schoolMapper.countSchoolByConditions(
-                param.getPageNo()-1, param.getPageSize(), querySchool);
+        double num = schoolMapper.countByConditions(querySchool, param.getKeyword());
         return (int) Math.ceil(num / param.getPageSize());
     }
 }
