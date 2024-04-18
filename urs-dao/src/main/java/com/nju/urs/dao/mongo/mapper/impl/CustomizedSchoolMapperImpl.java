@@ -1,6 +1,6 @@
 package com.nju.urs.dao.mongo.mapper.impl;
 
-import com.nju.urs.common.utils.FuzzySearch;
+import com.nju.urs.common.utils.QueryUtils;
 import com.nju.urs.dao.mongo.mapper.CustomizedSchoolMapper;
 import com.nju.urs.dao.mongo.model.po.School;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -23,29 +22,26 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
         this.mongoTemplate = mongoTemplate;
     }
 
-    private void addCondition(Query query, String fieldName, String value) {
-        if (value != null && !value.isEmpty()) {
-            query.addCriteria(Criteria.where(fieldName).is(value));
-        }
-    }
-
     private Query getSchoolQuery(School conditions, String keyword) {
         Query query = new Query();
         if (conditions != null) {
-            addCondition(query, "province_name", conditions.getProvinceName());
-            addCondition(query, "type_name", conditions.getTypeName());
-            addCondition(query, "level_name", conditions.getLevelName());
-            addCondition(query, "nature_name", conditions.getNatureName());
-            addCondition(query, "f211", conditions.getF211());
-            addCondition(query, "f985", conditions.getF985());
-            addCondition(query, "dual_class_name", conditions.getDualClassName());
-            addCondition(query, "belong", conditions.getBelong());
+            QueryUtils.addCondition(query, "province_name", conditions.getProvinceName());
+            QueryUtils.addCondition(query, "type_name", conditions.getTypeName());
+            QueryUtils.addCondition(query, "level_name", conditions.getLevelName());
+            QueryUtils.addCondition(query, "nature_name", conditions.getNatureName());
+            QueryUtils.addCondition(query, "f211", conditions.getF211());
+            QueryUtils.addCondition(query, "f985", conditions.getF985());
+            QueryUtils.addCondition(query, "dual_class_name", conditions.getDualClassName());
+            QueryUtils.addCondition(query, "belong", conditions.getBelong());
         }
-        String regex = FuzzySearch.getRegex(keyword);
-        Criteria criteria = new Criteria().orOperator(
-                Criteria.where("school_name").regex(regex, "i")
-        );
-        query.addCriteria(criteria);
+        if(keyword != null && !keyword.trim().equals("")) {
+            String regex = QueryUtils.getFuzzyRegex(keyword);
+            Criteria criteria = new Criteria().orOperator(
+                    Criteria.where("school_name").regex(regex, "i")
+            );
+            query.addCriteria(criteria);
+        }
+
         return query;
     }
 

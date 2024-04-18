@@ -1,4 +1,4 @@
-package com.nju.urs.common.model.dto;
+package com.nju.urs.recommendation.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

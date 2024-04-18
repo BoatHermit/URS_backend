@@ -1,7 +1,6 @@
 package com.nju.urs.dao.mongo.mapper;
 
 import com.nju.urs.dao.mongo.model.po.School;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -15,8 +14,7 @@ public interface SchoolMapper extends MongoRepository<School, String>, Customize
 
     @Query(value = "{}",fields = "{ 'school_id' : 1, 'school_name' : 1, 'province_name' : 1, 'school_type_name' : 1, " +
             "'type_name' : 1, 'nature_name' : 1, 'f985' : 1, 'f211' : 1, 'dual_class_name' : 1 }")
-    @NotNull
-    Page<School> findAll(@NotNull Pageable pageable);
+    Page<School> findAll(Pageable pageable);
 
     // @Query(value = "{'provinceName' : ?0, 'typeName' : ?1, 'levelName' : ?2, 'natureName' : ?3, 'f211' : ?4, " +
     //         "'f985' : ?5, 'dualClassName' : ?6, 'belong' : ?7}",
