@@ -2,7 +2,7 @@ package com.nju.urs.user.repository;
 import com.nju.urs.user.po.UserPO;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import org.apache.ibatis.annotations.Mapper;
+// import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Optional;
 
