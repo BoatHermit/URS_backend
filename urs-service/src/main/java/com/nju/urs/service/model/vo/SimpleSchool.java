@@ -8,7 +8,7 @@ public class SimpleSchool {
     private String schoolId;
     private String schoolName;
     private String provinceName;
-    private String schoolTypeName;
+    private String levelName;
     private String typeName;
     private String natureName;
     private String f985;
@@ -19,7 +19,7 @@ public class SimpleSchool {
         schoolId = school.getSchoolId();
         schoolName = school.getSchoolName();
         provinceName = school.getProvinceName();
-        schoolTypeName = school.getSchoolTypeName();
+        levelName = school.getLevelName();
         typeName = school.getTypeName();
         natureName = school.getNatureName();
         f985 = school.getF985();
