@@ -7,13 +7,3 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/urs
-  cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=1000,expireAfterAccess=10m
-
-mybatis-plus:
-  mapper-locations: classpath*:mapper/*Mapper.xml
-  type-aliases-package: com.nju.urs.dao.mysql.model.po
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
