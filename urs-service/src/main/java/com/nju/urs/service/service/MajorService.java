@@ -3,7 +3,7 @@ package com.nju.urs.service.service;
 import com.nju.urs.service.model.param.MajorFilterParam;
 import com.nju.urs.service.model.param.MajorSearchParam;
 import com.nju.urs.service.model.vo.CompleteMajor;
-import com.nju.urs.service.model.vo.SimpleMajor;
+import com.nju.urs.dao.mongo.model.vo.SimpleMajor;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package com.nju.urs.recommendation.service;
 
-import com.nju.urs.recommendation.model.dto.RecommendedResult;
-import com.nju.urs.recommendation.model.dto.StudentInfo;
-import com.nju.urs.recommendation.model.dto.RecommendedResults;
+import com.nju.urs.recommendation.model.vo.RecommendedResult;
+import com.nju.urs.recommendation.model.vo.StudentInfo;
+import com.nju.urs.recommendation.model.vo.RecommendedResults;
 
 import java.util.List;
 

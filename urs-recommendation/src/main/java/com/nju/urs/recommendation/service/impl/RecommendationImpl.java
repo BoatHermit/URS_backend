@@ -1,17 +1,20 @@
 package com.nju.urs.recommendation.service.impl;
 
+import com.nju.urs.dao.mongo.mapper.SchoolMapper;
+import com.nju.urs.dao.mongo.model.vo.SimpleSchool;
 import com.nju.urs.dao.mysql.mapper.SchoolCodeMapper;
-import com.nju.urs.recommendation.model.dto.RecommendedResult;
-import com.nju.urs.recommendation.model.dto.StudentInfo;
+import com.nju.urs.recommendation.model.vo.RecommendedResult;
+import com.nju.urs.recommendation.model.vo.StudentInfo;
 import com.nju.urs.dao.mysql.mapper.AdmissionMapper;
 import com.nju.urs.dao.mysql.mapper.SchoolMajorMapper;
 import com.nju.urs.dao.mysql.model.po.Admission;
 import com.nju.urs.dao.mysql.model.po.SchoolMajor;
-import com.nju.urs.recommendation.model.dto.RecommendedResults;
+import com.nju.urs.recommendation.model.vo.RecommendedResults;
 import com.nju.urs.recommendation.model.vo.SimpleAdmission;
 import com.nju.urs.recommendation.service.Recommendation;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -24,14 +27,17 @@ public class RecommendationImpl implements Recommendation {
     AdmissionMapper admissionMapper;
     SchoolCodeMapper schoolCodeMapper;
     SchoolMajorMapper schoolMajorMapper;
-
+    SchoolMapper schoolMapper;
 
     @Autowired
     public RecommendationImpl(SchoolMajorMapper schoolMajorMapper,
-                              SchoolCodeMapper schoolCodeMapper, AdmissionMapper admissionMapper) {
+                              SchoolCodeMapper schoolCodeMapper,
+                              AdmissionMapper admissionMapper,
+                              SchoolMapper schoolMapper) {
         this.schoolMajorMapper = schoolMajorMapper;
         this.schoolCodeMapper = schoolCodeMapper;
         this.admissionMapper = admissionMapper;
+        this.schoolMapper = schoolMapper;
     }
 
 
@@ -119,8 +125,10 @@ public class RecommendationImpl implements Recommendation {
     }
 
     private static double sigmoid(double x) {
-        double k = Math.PI;
-        return 1.0 / (1 + Math.exp(-k*(x-0.5)));
+        double k = 150;
+        // return 1.0 / (1 + Math.exp(-k*(x-0.5)));
+        // return (1.0/20.0) * (10-Math.log((1/x)-1));
+        return 0.5*(1/k)*Math.tan(Math.atan(k)*(2*(x-0.5)))+0.5;
     }
 
 
@@ -168,18 +176,20 @@ public class RecommendationImpl implements Recommendation {
             double admissionProbability = calculateProbabilityByND(ranks, studentInfo.getRank());
 
             RecommendedResult result = new RecommendedResult();
-            result.setSchoolId(schoolMajor.getSchoolId());
-            result.setMajorId(schoolMajor.getMajorId());
+
+            result.setSchoolInfo(new SimpleSchool(
+                    schoolMapper.findOneBySchoolId(String.valueOf(schoolMajor.getSchoolId()))));
+            result.setMajorCode(String.valueOf(schoolMajor.getMajorId()));
             result.setMajorName(schoolMajor.getMajorName());
             result.setAdmissionProbability(admissionProbability);
-            result.setSchoolName(schoolCodeMapper.selectById(String.valueOf(schoolMajor.getSchoolId()))
-                    .getName());
+            result.setAdmissions(admissions);
             results.add(result);
         }
         return results;
     }
 
 
+    @Cacheable("RecommendedResults")
     @Override
     public RecommendedResults recommend(StudentInfo studentInfo) {
         List<RecommendedResult> results = allRecommend(studentInfo);
@@ -188,16 +198,16 @@ public class RecommendationImpl implements Recommendation {
         List<RecommendedResult> mediumRisk = new ArrayList<>();
         List<RecommendedResult> lowRisk = new ArrayList<>();
         for (RecommendedResult result : results) {
-            if (result.getAdmissionProbability() < 0.3) {
+            if (result.getAdmissionProbability() < 0.5 /*&& result.getAdmissionProbability() >= 0.2*/) {
                 highRisk.add(result);
-            } else if (result.getAdmissionProbability() > 0.8) {
-                lowRisk.add(result);
-            } else {
+            } else if (result.getAdmissionProbability() >= 0.5 && result.getAdmissionProbability() < 0.8) {
                 mediumRisk.add(result);
+            } else if (result.getAdmissionProbability() >= 0.8 /*&& result.getAdmissionProbability() < 1.08*/) {
+                lowRisk.add(result);
             }
         }
         recommendedResults.setHighRisk(highRisk);
-        recommendedResults.setMediumRisk(mediumRisk);
+        recommendedResults.setMidRisk(mediumRisk);
         recommendedResults.setLowRisk(lowRisk);
 
         return recommendedResults;

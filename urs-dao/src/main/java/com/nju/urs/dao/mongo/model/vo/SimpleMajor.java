@@ -1,8 +1,7 @@
-package com.nju.urs.service.model.vo;
+package com.nju.urs.dao.mongo.model.vo;
 
 import com.nju.urs.dao.mongo.model.po.Major;
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 public class SimpleMajor {

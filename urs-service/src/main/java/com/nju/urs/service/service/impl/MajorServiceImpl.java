@@ -9,7 +9,7 @@ import com.nju.urs.service.model.param.MajorFilterParam;
 import com.nju.urs.service.model.param.MajorSearchParam;
 import com.nju.urs.service.model.vo.CompleteMajor;
 import com.nju.urs.service.model.vo.MajorConditions;
-import com.nju.urs.service.model.vo.SimpleMajor;
+import com.nju.urs.dao.mongo.model.vo.SimpleMajor;
 import com.nju.urs.service.service.MajorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

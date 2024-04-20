@@ -13,6 +13,7 @@ import java.util.Objects;
 public class SchoolMajor implements Serializable {
     private int schoolId;
     private int majorId;
+    private String province;
     private String majorName;
     public String subjects;
 
@@ -21,12 +22,13 @@ public class SchoolMajor implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SchoolMajor target = (SchoolMajor) o;
-        return this.schoolId == target.schoolId && this.majorId == target.majorId;
+        return this.schoolId == target.schoolId && this.majorId == target.majorId
+                && Objects.equals(this.province, target.province) && Objects.equals(this.majorName, target.majorName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schoolId, majorId);
+        return Objects.hash(schoolId, majorId, province);
     }
 
     // public static void main(String[] args) {

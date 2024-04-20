@@ -4,7 +4,7 @@ import com.nju.urs.dao.mongo.model.po.School;
 import com.nju.urs.service.model.vo.SchoolConditions;
 import com.nju.urs.service.model.param.SchoolFilterParam;
 import com.nju.urs.service.model.vo.CompleteSchool;
-import com.nju.urs.service.model.vo.SimpleSchool;
+import com.nju.urs.dao.mongo.model.vo.SimpleSchool;
 import com.nju.urs.service.service.SchoolService;
 import com.nju.urs.dao.mongo.mapper.SchoolMapper;
 import org.springframework.beans.factory.annotation.Autowired;
