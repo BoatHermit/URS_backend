@@ -2,7 +2,7 @@ spring:
   application:
     name: urs-dao
   profiles:
-    active: prod
+    active: dev
   cache:
     type: caffeine
     caffeine:
@@ -12,4 +12,6 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: com.nju.urs.dao.mysql.model.po
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
