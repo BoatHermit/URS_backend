@@ -73,21 +73,14 @@ public class JwtUtils {
 
 
     //根据token获取phone
-    public static String getCheckPhoneByJwtToken(String token) {
-        System.out.println("test: " + token);
-        if(token.isEmpty()) {
+    public static String getCheckPhoneByJwtToken(HttpServletRequest request) {
+        String jwtToken = request.getHeader("token");
+        if(StringUtils.isEmpty(jwtToken)) {
             return "";
         }
-        try {
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJws(token);
-            Claims claims = claimsJws.getBody();
-            String phone = (String)claims.get("phone");
-            System.out.println(phone);
-            return phone;
-        } catch (JWTDecodeException e) {
-            return null;
-        }
-
+        Jws<Claims> claimsJws = Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJws(jwtToken);
+        Claims claims = claimsJws.getBody();
+        return (String)claims.get("phone");
     }
 
 }

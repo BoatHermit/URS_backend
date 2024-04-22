@@ -23,6 +23,7 @@ public enum ResultCode {
     PARAMS_ERROR(10001,"用户名或密码不能为空"),
     ACCOUNT_PWD_NOT_EXIST(10002,"用户名或密码错误"),
     ACCOUNT_EXIST(10004,"账号已存在"),
+    LOGIN_FAIL(10003,"登陆失败"),
 
     NO_PERMISSION(70001,"无访问权限"),
     SESSION_TIME_OUT(90001,"会话超时"),

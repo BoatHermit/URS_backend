@@ -12,6 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface UserService {
     String[] login(LoginVO loginVO);
     void register(RegisterVO registerVO);
-    UserVO getUserInfo(String userName);
+    UserVO getUserInfo(String phoneNumber);
     UserVO update(UserVO userVO);
 }
