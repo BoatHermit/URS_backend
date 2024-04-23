@@ -28,4 +28,6 @@ public class Major {
     private String viewWeek;
     @Field("special_id")
     private String specialId;
+    @Field("salaryavg")
+    private Integer salaryAvg;
 }

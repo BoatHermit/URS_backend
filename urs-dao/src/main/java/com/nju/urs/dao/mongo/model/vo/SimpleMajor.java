@@ -12,7 +12,7 @@ public class SimpleMajor {
     private String level3Name;
     private String name;
     private String code;
-    private String viewWeek;
+    private Integer salaryAvg;
 
     public SimpleMajor(Major major) {
         this.degree = major.getDegree();
@@ -22,6 +22,6 @@ public class SimpleMajor {
         this.level3Name = major.getLevel3Name();
         this.name = major.getName();
         this.code = major.getCode();
-        this.viewWeek = major.getViewWeek();
+        this.salaryAvg = major.getSalaryAvg();
     }
 }
