@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @TableName("schools")
 public class SchoolCode {
-    private int id;
+    private String id;
     private String name;
 }

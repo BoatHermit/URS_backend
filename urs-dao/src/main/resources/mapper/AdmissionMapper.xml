@@ -4,6 +4,10 @@
 
 <mapper namespace="com.nju.urs.dao.mysql.mapper.AdmissionMapper">
 
+    <select id="findBySchoolIdAndProvince" resultType="com.nju.urs.dao.mysql.model.po.Admission">
+        select * from admissions where school_id=#{schoolId} and province=#{province}
+    </select>
+
     <select id="findByProvince" resultType="com.nju.urs.dao.mysql.model.po.Admission">
         select * from admissions where province=#{province}
     </select>

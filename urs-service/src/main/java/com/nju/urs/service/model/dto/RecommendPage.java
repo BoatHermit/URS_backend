@@ -1,5 +1,6 @@
-package com.nju.urs.recommendation.model.vo;
+package com.nju.urs.service.model.dto;
 
+import com.nju.urs.recommendation.model.vo.RecommendedResult;
 import lombok.Data;
 
 import java.util.List;

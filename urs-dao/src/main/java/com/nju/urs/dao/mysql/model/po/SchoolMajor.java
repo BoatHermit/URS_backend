@@ -11,8 +11,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @TableName("school_major")
 public class SchoolMajor implements Serializable {
-    private int schoolId;
-    private int majorId;
+    private String schoolId;
+    private String majorId;
     private String province;
     private String majorName;
     public String subjects;
@@ -22,7 +22,7 @@ public class SchoolMajor implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SchoolMajor target = (SchoolMajor) o;
-        return this.schoolId == target.schoolId && this.majorId == target.majorId
+        return Objects.equals(this.schoolId, target.schoolId) && Objects.equals(this.majorId, target.majorId)
                 && Objects.equals(this.province, target.province) && Objects.equals(this.majorName, target.majorName);
     }
 

@@ -7,10 +7,10 @@ import lombok.Data;
 @TableName("admissions")
 public class Admission {
     private int id;
-    private int schoolId;
-    private int majorId;
+    private String schoolId;
+    private String majorId;
     private String province;
     private int rank;
     private int score;
-    private int year;
+    private String year;
 }

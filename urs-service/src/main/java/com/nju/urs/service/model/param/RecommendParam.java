@@ -1,4 +1,4 @@
-package com.nju.urs.recommendation.model.param;
+package com.nju.urs.service.model.param;
 
 import com.nju.urs.recommendation.model.vo.StudentInfo;
 import lombok.Data;
