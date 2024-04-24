@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SchoolMajorMapper extends BaseMapper<SchoolMajor> {
-    SchoolMajor findBySchoolIdAndMajorId(int schoolId, int majorId);
+    SchoolMajor findBySchoolIdAndMajorIdAndProvince(String schoolId, String majorId, String province);
 }

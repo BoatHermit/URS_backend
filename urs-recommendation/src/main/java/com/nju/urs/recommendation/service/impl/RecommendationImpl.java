@@ -3,14 +3,11 @@ package com.nju.urs.recommendation.service.impl;
 import com.nju.urs.dao.mongo.mapper.SchoolMapper;
 import com.nju.urs.dao.mongo.model.vo.SimpleSchool;
 import com.nju.urs.dao.mysql.mapper.SchoolCodeMapper;
-import com.nju.urs.recommendation.model.vo.RecommendedResult;
-import com.nju.urs.recommendation.model.vo.StudentInfo;
+import com.nju.urs.recommendation.model.vo.*;
 import com.nju.urs.dao.mysql.mapper.AdmissionMapper;
 import com.nju.urs.dao.mysql.mapper.SchoolMajorMapper;
 import com.nju.urs.dao.mysql.model.po.Admission;
 import com.nju.urs.dao.mysql.model.po.SchoolMajor;
-import com.nju.urs.recommendation.model.vo.RecommendedResults;
-import com.nju.urs.recommendation.model.vo.SimpleAdmission;
 import com.nju.urs.recommendation.service.Recommendation;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,26 +49,29 @@ public class RecommendationImpl implements Recommendation {
         return result;
     }
 
-
-    private Map<SchoolMajor, List<SimpleAdmission>> preprocessing(StudentInfo studentInfo) {
+    private Map<SchoolMajor, List<SimpleAdmission>> wrapAdmissions(List<Admission> admissions, StudentInfo studentInfo) {
         Map<SchoolMajor, List<SimpleAdmission>> map = new HashMap<>();
 
-        List<Admission> admissions = admissionMapper.findByProvince(studentInfo.getProvince());
         for (Admission admission : admissions) {
-            SchoolMajor schoolMajor = schoolMajorMapper.findBySchoolIdAndMajorId(
-                    admission.getSchoolId(), admission.getMajorId());
-            if (checkSubjects(studentInfo.getSubjects(), schoolMajor.getSubjects())) {
+            SchoolMajor schoolMajor = schoolMajorMapper.findBySchoolIdAndMajorIdAndProvince(
+                    admission.getSchoolId(), admission.getMajorId(), admission.getProvince());
+            if (schoolMajor != null && checkSubjects(studentInfo.getSubjects(), schoolMajor.getSubjects())) {
                 if (!map.containsKey(schoolMajor)) {
                     List<SimpleAdmission> simpleAdmissions = new ArrayList<>();
                     map.put(schoolMajor, simpleAdmissions);
                 }
                 SimpleAdmission sAdmission = new SimpleAdmission(
-                        admission.getRank(), admission.getScore(), admission.getYear());
+                        admission.getRank(), admission.getScore(), Integer.parseInt(admission.getYear()));
                 map.get(schoolMajor).add(sAdmission);
             }
         }
-
         return map;
+    }
+
+
+    private Map<SchoolMajor, List<SimpleAdmission>> preprocessing(StudentInfo studentInfo) {
+        List<Admission> admissions = admissionMapper.findByProvince(studentInfo.getProvince());
+        return wrapAdmissions(admissions, studentInfo);
     }
 
 
@@ -158,6 +158,14 @@ public class RecommendationImpl implements Recommendation {
         return probability;
     }
 
+    public double calculateProbability(List<SimpleAdmission> admissions, int studentRank) {
+        Collections.sort(admissions);
+
+        List<Double> ranks = admissions.stream()
+                .map(obj -> (double) ((SimpleAdmission) obj).getRank())
+                .collect(Collectors.toList());
+        return calculateProbabilityByND(ranks, studentRank);
+    }
 
     @Override
     public List<RecommendedResult> allRecommend(StudentInfo studentInfo) {
@@ -166,14 +174,8 @@ public class RecommendationImpl implements Recommendation {
 
         for (SchoolMajor schoolMajor : map.keySet()) {
             List<SimpleAdmission> admissions = map.get(schoolMajor);
-            Collections.sort(admissions);
 
-            List<Double> ranks = admissions.stream()
-                    .map(obj -> (double) ((SimpleAdmission) obj).getRank())
-                    .collect(Collectors.toList());
-
-
-            double admissionProbability = calculateProbabilityByND(ranks, studentInfo.getRank());
+            double admissionProbability = calculateProbability(admissions, studentInfo.getRank());
 
             RecommendedResult result = new RecommendedResult();
 
@@ -188,9 +190,8 @@ public class RecommendationImpl implements Recommendation {
         return results;
     }
 
-
-    @Cacheable("RecommendedResults")
     @Override
+    @Cacheable("RecommendedResults")
     public RecommendedResults recommend(StudentInfo studentInfo) {
         List<RecommendedResult> results = allRecommend(studentInfo);
         RecommendedResults recommendedResults = new RecommendedResults();
@@ -211,5 +212,24 @@ public class RecommendationImpl implements Recommendation {
         recommendedResults.setLowRisk(lowRisk);
 
         return recommendedResults;
+    }
+
+    @Override
+    @Cacheable("SchoolAdmissionProbability")
+    public List<MajorAdmission> calculateSchoolAdmissionProbability(String schoolId, StudentInfo studentInfo) {
+        List<Admission> admissions = admissionMapper.findBySchoolIdAndProvince(schoolId, studentInfo.getProvince());
+        Map<SchoolMajor, List<SimpleAdmission>> admissionsMap = wrapAdmissions(admissions, studentInfo);
+
+        List<MajorAdmission> majorAdmissions = new ArrayList<>();
+        admissionsMap.forEach((k, v) -> {
+            MajorAdmission majorAdmission = new MajorAdmission();
+            majorAdmission.setMajorCode(String.valueOf(k.getMajorId()));
+            majorAdmission.setMajorName(k.getMajorName());
+            majorAdmission.setAdmissions(v);
+            majorAdmission.setAdmissionProbability(calculateProbability(v, studentInfo.getRank()));
+            majorAdmissions.add(majorAdmission);
+        });
+
+        return majorAdmissions;
     }
 }
