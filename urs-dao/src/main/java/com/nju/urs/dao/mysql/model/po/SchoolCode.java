@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("schools")
+@TableName("school_code")
 public class SchoolCode {
-    private String id;
+    private Integer id;
     private String name;
+    private String code;
+    private Integer provinceId;
 }

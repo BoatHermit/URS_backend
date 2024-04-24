@@ -11,24 +11,26 @@ import java.util.Objects;
 @AllArgsConstructor
 @TableName("school_major")
 public class SchoolMajor implements Serializable {
-    private String schoolId;
-    private String majorId;
-    private String province;
+    private int id;
+    private Integer schoolId;
+    private Integer majorId;
+    private Integer provinceId;
+    private Integer subject;
+    private String majorCode;
     private String majorName;
-    public String subjects;
+    public String requirement;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SchoolMajor target = (SchoolMajor) o;
-        return Objects.equals(this.schoolId, target.schoolId) && Objects.equals(this.majorId, target.majorId)
-                && Objects.equals(this.province, target.province) && Objects.equals(this.majorName, target.majorName);
+        return this.id == target.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schoolId, majorId, province);
+        return Objects.hash(schoolId, majorId, provinceId);
     }
 
     // public static void main(String[] args) {

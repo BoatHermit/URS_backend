@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nju.urs.dao.mysql.mapper.ScoreLineMapper">
+
+    <select id="findBySchoolIdAndProvinceName" resultType="com.nju.urs.dao.mysql.model.po.ScoreLine">
+        select * from score_line where school_id=#{schoolId} and province_id=#{province}
+    </select>
+    <select id="findBySchoolId" resultType="com.nju.urs.dao.mysql.model.po.ScoreLine">
+        select * from score_line where school_id=#{schoolId}
+    </select>
+    <select id="findBySchoolIdAndProvinceNameAndSubject" resultType="com.nju.urs.dao.mysql.model.po.ScoreLine">
+        select * from score_line where school_id=#{schoolId} and province_id=#{province} and subject=#{subject}
+    </select>
+</mapper>
