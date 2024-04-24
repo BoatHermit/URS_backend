@@ -44,6 +44,13 @@ public class UserController {
         }else{
             return Result.success();
         }
-
     }
+
+    @PostMapping("/update")
+    public Result update(@RequestBody UserVO userVO) {
+        UserVO newUser = userService.update(userVO);
+        return Result.success();
+    }
+
+
 }

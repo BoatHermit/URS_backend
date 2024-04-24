@@ -14,6 +14,7 @@ public class RegisterVO {
         UserPO userPO = new UserPO();
         userPO.setPassword(MD5.encrypt(this.getPwd()));
         userPO.setPhone(this.getPhone());
+        userPO.setName(this.getName());
         return userPO;
     }
 
