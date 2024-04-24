@@ -12,5 +12,5 @@ public interface Recommendation {
     List<RecommendedResult> allRecommend(StudentInfo studentInfo);
 
     RecommendedResults recommend(StudentInfo studentInfo);
-    List<MajorAdmission> calculateSchoolAdmissionProbability(String schoolId, StudentInfo studentInfo);
+    List<MajorAdmission> calculateSchoolAdmissionProbability(Integer schoolId, StudentInfo studentInfo);
 }

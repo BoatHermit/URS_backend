@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface AdmissionMapper extends BaseMapper<Admission> {
-    List<Admission> findBySchoolIdAndProvince(String schoolId, String province);
+    List<Admission> findBySchoolIdAndProvinceId(Integer schoolId, Integer province);
 
-    List<Admission> findByProvince(String province);
+    List<Admission> findByProvinceId(Integer provinceId);
 }

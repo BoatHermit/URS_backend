@@ -26,4 +26,9 @@ public class AdmissionController {
     public Result filter(@RequestBody SchoolAdmissionParam param) {
         return Result.success(admissionService.schoolAdmission(param));
     }
+
+    @GetMapping("/scoreline")
+    public Result getScoreLine(String schoolId, String province, Integer subject) {
+        return Result.success(admissionService.getScoreLines(schoolId, province, subject));
+    }
 }

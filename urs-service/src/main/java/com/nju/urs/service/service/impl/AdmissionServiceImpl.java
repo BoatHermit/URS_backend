@@ -1,11 +1,15 @@
 package com.nju.urs.service.service.impl;
 
+import com.nju.urs.common.enums.Province;
 import com.nju.urs.dao.mysql.mapper.AdmissionMapper;
+import com.nju.urs.dao.mysql.mapper.ScoreLineMapper;
+import com.nju.urs.dao.mysql.model.po.ScoreLine;
 import com.nju.urs.recommendation.model.vo.*;
 import com.nju.urs.service.model.dto.RecommendPage;
 import com.nju.urs.service.model.dto.SchoolAdmissionPage;
 import com.nju.urs.service.model.param.SchoolAdmissionParam;
 import com.nju.urs.service.model.param.RecommendParam;
+import com.nju.urs.service.model.vo.ScoreLines;
 import com.nju.urs.service.service.AdmissionService;
 import com.nju.urs.recommendation.service.Recommendation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -20,11 +26,14 @@ public class AdmissionServiceImpl implements AdmissionService {
 
     Recommendation recommendation;
     AdmissionMapper admissionMapper;
+    ScoreLineMapper scoreLineMapper;
 
     @Autowired
-    public AdmissionServiceImpl(Recommendation recommendation, AdmissionMapper admissionMapper) {
+    public AdmissionServiceImpl(Recommendation recommendation, AdmissionMapper admissionMapper,
+                                ScoreLineMapper scoreLineMapper) {
         this.recommendation = recommendation;
         this.admissionMapper = admissionMapper;
+        this.scoreLineMapper = scoreLineMapper;
     }
 
     @Override
@@ -71,7 +80,7 @@ public class AdmissionServiceImpl implements AdmissionService {
     @Override
     public SchoolAdmissionPage schoolAdmission(SchoolAdmissionParam param) {
         List<MajorAdmission> list = recommendation.calculateSchoolAdmissionProbability(
-                param.getSchoolId(), param.getStudentInfo());
+                Integer.valueOf(param.getSchoolId()), param.getStudentInfo());
         if (param.getPageNo() != null && param.getPageSize() != null) {
             Pageable pageable = PageRequest.of(param.getPageNo()-1, param.getPageSize());
             // 对缓存中的数据进行分页操作
@@ -89,5 +98,27 @@ public class AdmissionServiceImpl implements AdmissionService {
             page.setMajorAdmissions(list);
             return page;
         }
+    }
+
+    @Override
+    public ScoreLines getScoreLines(String schoolId, String province, int subject) {
+        List<ScoreLine> scoreLineList;
+
+        scoreLineList = scoreLineMapper.findBySchoolIdAndProvinceNameAndSubject(schoolId, province, subject);
+
+
+        List<String> provinces = new ArrayList<>();
+        List<Integer> scores = new ArrayList<>();
+        List<Integer> ranks = new ArrayList<>();
+        List<Integer> years = new ArrayList<>();
+        scoreLineList.sort(Comparator.comparingInt(ScoreLine::getYear));
+
+        for (ScoreLine scoreLine : scoreLineList) {
+            provinces.add(Province.getNameById(scoreLine.getProvinceId()));
+            scores.add(scoreLine.getScore());
+            ranks.add(scoreLine.getMinRank());
+            years.add(scoreLine.getYear());
+        }
+        return new ScoreLines(provinces, scores, ranks, years);
     }
 }

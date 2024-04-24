@@ -4,15 +4,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("admissions")
-public class Admission {
-    private Integer id;
+@TableName("score_line")
+public class ScoreLine {
     private Integer schoolId;
-    private Integer majorId;
     private Integer provinceId;
     private Integer subject;
-    private Integer rank;
-    private Integer score;
     private Integer year;
-    private Integer schoolMajorId;
+    private Integer score;
+    private Integer minRank;
 }

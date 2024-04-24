@@ -1,8 +1,10 @@
 package com.nju.urs.recommendation.service.impl;
 
+import com.nju.urs.common.enums.Province;
 import com.nju.urs.dao.mongo.mapper.SchoolMapper;
 import com.nju.urs.dao.mongo.model.vo.SimpleSchool;
 import com.nju.urs.dao.mysql.mapper.SchoolCodeMapper;
+import com.nju.urs.dao.mysql.model.vo.SimpleAdmission;
 import com.nju.urs.recommendation.model.vo.*;
 import com.nju.urs.dao.mysql.mapper.AdmissionMapper;
 import com.nju.urs.dao.mysql.mapper.SchoolMajorMapper;
@@ -15,6 +17,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,15 +56,14 @@ public class RecommendationImpl implements Recommendation {
         Map<SchoolMajor, List<SimpleAdmission>> map = new HashMap<>();
 
         for (Admission admission : admissions) {
-            SchoolMajor schoolMajor = schoolMajorMapper.findBySchoolIdAndMajorIdAndProvince(
-                    admission.getSchoolId(), admission.getMajorId(), admission.getProvince());
-            if (schoolMajor != null && checkSubjects(studentInfo.getSubjects(), schoolMajor.getSubjects())) {
+            SchoolMajor schoolMajor = schoolMajorMapper.findById(admission.getSchoolMajorId());
+            if (schoolMajor != null && checkSubjects(studentInfo.getSubjects(), schoolMajor.getRequirement())) {
                 if (!map.containsKey(schoolMajor)) {
                     List<SimpleAdmission> simpleAdmissions = new ArrayList<>();
                     map.put(schoolMajor, simpleAdmissions);
                 }
                 SimpleAdmission sAdmission = new SimpleAdmission(
-                        admission.getRank(), admission.getScore(), Integer.parseInt(admission.getYear()));
+                        admission.getRank(), admission.getScore(), admission.getYear());
                 map.get(schoolMajor).add(sAdmission);
             }
         }
@@ -70,8 +72,26 @@ public class RecommendationImpl implements Recommendation {
 
 
     private Map<SchoolMajor, List<SimpleAdmission>> preprocessing(StudentInfo studentInfo) {
-        List<Admission> admissions = admissionMapper.findByProvince(studentInfo.getProvince());
-        return wrapAdmissions(admissions, studentInfo);
+        List<Admission> admissions = admissionMapper.findByProvinceId(Province.getIdByName(studentInfo.getProvince()));
+        Map<SchoolMajor, List<SimpleAdmission>> map = wrapAdmissions(admissions, studentInfo);
+
+        Iterator<Map.Entry<SchoolMajor, List<SimpleAdmission>>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<SchoolMajor, List<SimpleAdmission>> entry = iterator.next();
+            List<SimpleAdmission> admissionList = entry.getValue();
+            boolean shouldRemove = true;
+            for (SimpleAdmission admission : admissionList) {
+                if (Math.abs(admission.getRank()-studentInfo.getRank()) < 5000
+                        || Math.abs(admission.getScore() - studentInfo.getScore()) < 100) {
+                    shouldRemove = false;
+                    break;
+                }
+            }
+            if (shouldRemove) {
+                iterator.remove();
+            }
+        }
+        return map;
     }
 
 
@@ -142,7 +162,7 @@ public class RecommendationImpl implements Recommendation {
         // 以最低位次为 mu
         // double mu = ranks.stream().max(Double::compare).orElse(Double.NaN);
         double prediction = predictByES(ranks,1, 0.5);
-        // ranks.add(prediction);
+        ranks.add(prediction);
         double delta = calculateDelta(prediction, ranks);
 
         // 使用正态分布函数计算考生被录取的概率
@@ -162,9 +182,23 @@ public class RecommendationImpl implements Recommendation {
         Collections.sort(admissions);
 
         List<Double> ranks = admissions.stream()
-                .map(obj -> (double) ((SimpleAdmission) obj).getRank())
+                .map(obj -> (double) obj.getRank())
+                .filter(rank -> rank > 0)
                 .collect(Collectors.toList());
-        return calculateProbabilityByND(ranks, studentRank);
+
+        if (ranks.size() > 1) {
+            return calculateProbabilityByND(ranks, studentRank);
+        } else if (ranks.size() == 1) {
+            int rank = ranks.get(0).intValue();
+            if (studentRank<rank*0.9) {
+                return 0.8;
+            } else if (studentRank>rank*1.1) {
+                return 0.2;
+            } else {
+                return 0.5;
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -216,8 +250,9 @@ public class RecommendationImpl implements Recommendation {
 
     @Override
     @Cacheable("SchoolAdmissionProbability")
-    public List<MajorAdmission> calculateSchoolAdmissionProbability(String schoolId, StudentInfo studentInfo) {
-        List<Admission> admissions = admissionMapper.findBySchoolIdAndProvince(schoolId, studentInfo.getProvince());
+    public List<MajorAdmission> calculateSchoolAdmissionProbability(Integer schoolId, StudentInfo studentInfo) {
+        List<Admission> admissions = admissionMapper.findBySchoolIdAndProvinceId(
+                schoolId, Province.getIdByName(studentInfo.getProvince()));
         Map<SchoolMajor, List<SimpleAdmission>> admissionsMap = wrapAdmissions(admissions, studentInfo);
 
         List<MajorAdmission> majorAdmissions = new ArrayList<>();

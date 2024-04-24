@@ -4,7 +4,12 @@
 
 <mapper namespace="com.nju.urs.dao.mysql.mapper.SchoolMajorMapper">
 
-    <select id="findBySchoolIdAndMajorIdAndProvince" resultType="com.nju.urs.dao.mysql.model.po.SchoolMajor">
-        select * from school_major where school_id=#{schoolId} and major_id=#{majorId} and province=#{province}
+    <select id="findById" resultType="com.nju.urs.dao.mysql.model.po.SchoolMajor">
+        select * from school_major where id=#{id}
+    </select>
+    <select id="findByKey"
+            resultType="com.nju.urs.dao.mysql.model.po.SchoolMajor">
+        select * from school_major
+        where school_id=#{schoolId} and major_id=#{majorId} and province_id=#{provinceId} and subject=#{subject}
     </select>
 </mapper>

@@ -1,4 +1,4 @@
-package com.nju.urs.recommendation.model.vo;
+package com.nju.urs.dao.mysql.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
