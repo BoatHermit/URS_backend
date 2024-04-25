@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class StudentInfo {
     private int score;
     private int rank;
-    private int provinceId;
+    private String province;
     /**
      * 六位，依次代表物理、化学、生物、历史、政治、地理
      */

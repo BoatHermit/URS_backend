@@ -36,11 +36,24 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
                 andCriteriaList.add(new Criteria().orOperator(criteriaList));
             }
             if (conditions.getTypeName() != null && !conditions.getTypeName().isEmpty()) {
-                query.addCriteria(Criteria.where("type_name").regex(
-                        "^"+conditions.getTypeName()+".*"));
+                String[] types = conditions.getTypeName().split(" ");
+                List<Criteria> criteriaList = new ArrayList<>();
+                for (String type : types) {
+                    criteriaList.add(Criteria.where("type_name").regex(
+                            "^"+type+".*"));
+                }
+                andCriteriaList.add(new Criteria().orOperator(criteriaList));
             }
+            if (conditions.getNatureName() != null && !conditions.getNatureName().isEmpty()) {
+                String[] natureNames = conditions.getNatureName().split(" ");
+                List<Criteria> criteriaList = new ArrayList<>();
+                for (String natureName : natureNames) {
+                    criteriaList.add(Criteria.where("nature_name").is(natureName));
+                }
+                andCriteriaList.add(new Criteria().orOperator(criteriaList));
+            }
+
             QueryUtils.addCondition(query, "level_name", conditions.getLevelName());
-            QueryUtils.addCondition(query, "nature_name", conditions.getNatureName());
             QueryUtils.addCondition(query, "f211", conditions.getF211());
             QueryUtils.addCondition(query, "f985", conditions.getF985());
             QueryUtils.addCondition(query, "dual_class_name", conditions.getDualClassName());
@@ -49,25 +62,9 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
                 QueryUtils.addCondition(query, "belong", "教育部");
             } else if (conditions.getBelong() != null && conditions.getBelong().equals("中央部委")) {
                 String[] departments = {
-                        "教育部",
-                        "外交部",
-                        "工业和信息化部",
-                        "国家民委",
-                        "中国科学院",
-                        "中央军委",
-                        "中央统战部",
-                        "中央办公厅",
-                        "公安部",
-                        "国家卫生健康委员会",
-                        "国家体育总局",
-                        "中华全国总工会",
-                        "中华妇女联合会",
-                        "交通运输部（中国民用航空局）",
-                        "海关总署",
-                        "交通运输部",
-                        "司法部",
-                        "应急管理部",
-                        "中国地震局"
+                        "教育部", "外交部", "工业和信息化部", "国家民委", "中国科学院", "中央军委", "中央统战部", "中央办公厅",
+                        "公安部", "国家卫生健康委员会", "国家体育总局", "中华全国总工会", "中华妇女联合会",
+                        "交通运输部（中国民用航空局）", "海关总署", "交通运输部", "司法部", "应急管理部", "中国地震局"
                 };
                 List<Criteria> criteriaList = new ArrayList<>();
                 for (String department : departments) {

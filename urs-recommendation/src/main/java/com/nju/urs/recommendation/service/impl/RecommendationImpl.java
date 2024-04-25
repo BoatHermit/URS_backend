@@ -71,7 +71,7 @@ public class RecommendationImpl implements Recommendation {
 
 
     private Map<SchoolMajor, List<SimpleAdmission>> preprocessing(StudentInfo studentInfo) {
-        List<Admission> admissions = admissionMapper.findByProvinceId(studentInfo.getProvinceId());
+        List<Admission> admissions = admissionMapper.findByProvinceId(Province.getIdByName(studentInfo.getProvince()));
         Map<SchoolMajor, List<SimpleAdmission>> map = wrapAdmissions(admissions, studentInfo);
 
         Iterator<Map.Entry<SchoolMajor, List<SimpleAdmission>>> iterator = map.entrySet().iterator();
@@ -251,7 +251,7 @@ public class RecommendationImpl implements Recommendation {
     @Cacheable("SchoolAdmissionProbability")
     public List<MajorAdmission> calculateSchoolAdmissionProbability(Integer schoolId, StudentInfo studentInfo) {
         List<Admission> admissions = admissionMapper.findBySchoolIdAndProvinceId(
-                schoolId, studentInfo.getProvinceId());
+                schoolId, Province.getIdByName(studentInfo.getProvince()));
         Map<SchoolMajor, List<SimpleAdmission>> admissionsMap = wrapAdmissions(admissions, studentInfo);
 
         List<MajorAdmission> majorAdmissions = new ArrayList<>();
