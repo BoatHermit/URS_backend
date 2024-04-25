@@ -1,5 +1,7 @@
 package com.nju.urs.recommendation.service;
 
+import com.nju.urs.dao.mongo.model.po.Major;
+import com.nju.urs.dao.mongo.model.po.School;
 import com.nju.urs.recommendation.model.vo.MajorAdmission;
 import com.nju.urs.recommendation.model.vo.RecommendedResult;
 import com.nju.urs.recommendation.model.vo.StudentInfo;

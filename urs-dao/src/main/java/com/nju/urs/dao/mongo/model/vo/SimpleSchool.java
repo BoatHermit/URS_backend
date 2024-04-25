@@ -3,8 +3,10 @@ package com.nju.urs.dao.mongo.model.vo;
 import com.nju.urs.dao.mongo.model.po.School;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class SimpleSchool {
+public class SimpleSchool implements Serializable {
     private String schoolId;
     private String schoolName;
     private String provinceName;

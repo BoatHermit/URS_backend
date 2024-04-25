@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
-public class SimpleAdmission implements Comparable<SimpleAdmission> {
+public class SimpleAdmission implements Serializable, Comparable<SimpleAdmission> {
     private int rank;
     private int score;
     private int year;

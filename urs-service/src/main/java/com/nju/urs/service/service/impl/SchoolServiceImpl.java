@@ -67,23 +67,9 @@ public class SchoolServiceImpl implements SchoolService {
         return simpleSchools;
     }
 
-    private School wrapConditions(SchoolConditions conditions) {
-        School school = new School();
-        school.setProvinceName(conditions.getProvinceName());
-        school.setTypeName(conditions.getTypeName());
-        school.setLevelName(conditions.getLevelName());
-        school.setNatureName(conditions.getNatureName());
-        school.setF211(conditions.getF211());
-        school.setF985(conditions.getF985());
-        school.setDualClassName(conditions.getDualClassName());
-        school.setBelong(conditions.getBelong());
-
-        return school;
-    }
-
     @Override
     public List<SimpleSchool> getSchoolsByConditions(SchoolFilterParam param) {
-        School querySchool = wrapConditions(param.getConditions());
+        School querySchool = SchoolConditions.wrapConditions(param.getConditions());
 
         List<School> schools = schoolMapper.findByConditions(
                 param.getPageNo(), param.getPageSize(), querySchool, param.getKeyword());
@@ -98,7 +84,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     public Integer countPagesByConditions(SchoolFilterParam param) {
-        School querySchool = wrapConditions(param.getConditions());
+        School querySchool = SchoolConditions.wrapConditions(param.getConditions());
         double num = schoolMapper.countByConditions(querySchool, param.getKeyword());
         return (int) Math.ceil(num / param.getPageSize());
     }

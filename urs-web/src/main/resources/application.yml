@@ -4,9 +4,7 @@ spring:
   profiles:
     active: dev
   cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=1000,expireAfterAccess=10m
+    type: redis
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml

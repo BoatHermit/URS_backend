@@ -50,7 +50,11 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
         Query query = getSchoolQuery(school, keyword);
         Pageable pageable = PageRequest.of(pageNo-1, pageSize);
         query.with(pageable);
-
+        return mongoTemplate.find(query, School.class);
+    }
+    @Override
+    public List<School> findByConditions(School school, String keyword) {
+        Query query = getSchoolQuery(school, keyword);
         return mongoTemplate.find(query, School.class);
     }
 

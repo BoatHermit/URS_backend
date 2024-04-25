@@ -1,5 +1,6 @@
 package com.nju.urs.service.model.vo;
 
+import com.nju.urs.dao.mongo.model.po.School;
 import lombok.Data;
 
 @Data
@@ -18,4 +19,17 @@ public class SchoolConditions {
     private String dualClassName;
     // 教育部
     private String belong;
+    public static School wrapConditions(SchoolConditions conditions) {
+        School school = new School();
+        if (conditions == null) return school;
+        school.setProvinceName(conditions.getProvinceName());
+        school.setTypeName(conditions.getTypeName());
+        school.setLevelName(conditions.getLevelName());
+        school.setNatureName(conditions.getNatureName());
+        school.setF211(conditions.getF211());
+        school.setF985(conditions.getF985());
+        school.setDualClassName(conditions.getDualClassName());
+        school.setBelong(conditions.getBelong());
+        return school;
+    }
 }

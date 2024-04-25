@@ -2,10 +2,11 @@ package com.nju.urs.recommendation.model.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class RecommendedResults {
+public class RecommendedResults implements Serializable {
     // 可冲击，录取概率小于30%
     private List<RecommendedResult> highRisk;
     // 较稳妥，录取概率大于30%，小于80%

@@ -54,10 +54,15 @@ public class CustomizedMajorMapperImpl implements CustomizedMajorMapper {
     }
 
     @Override
-    public List<Major> findByConditions(int pageNo, int pageSize, Major school, String keyword) {
-        Query query = getMajorQuery(school, keyword);
+    public List<Major> findByConditions(int pageNo, int pageSize, Major major, String keyword) {
+        Query query = getMajorQuery(major, keyword);
         Pageable queryPageable = PageRequest.of(pageNo-1, pageSize);
         query.with(queryPageable);
+
+        return mongoTemplate.find(query, Major.class);
+    }
+    public List<Major> findByConditions(Major major, String keyword) {
+        Query query = getMajorQuery(major, keyword);
 
         return mongoTemplate.find(query, Major.class);
     }

@@ -17,7 +17,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,7 +71,7 @@ public class RecommendationImpl implements Recommendation {
 
 
     private Map<SchoolMajor, List<SimpleAdmission>> preprocessing(StudentInfo studentInfo) {
-        List<Admission> admissions = admissionMapper.findByProvinceId(Province.getIdByName(studentInfo.getProvince()));
+        List<Admission> admissions = admissionMapper.findByProvinceId(studentInfo.getProvinceId());
         Map<SchoolMajor, List<SimpleAdmission>> map = wrapAdmissions(admissions, studentInfo);
 
         Iterator<Map.Entry<SchoolMajor, List<SimpleAdmission>>> iterator = map.entrySet().iterator();
@@ -146,8 +145,6 @@ public class RecommendationImpl implements Recommendation {
 
     private static double sigmoid(double x) {
         double k = 150;
-        // return 1.0 / (1 + Math.exp(-k*(x-0.5)));
-        // return (1.0/20.0) * (10-Math.log((1/x)-1));
         return 0.5*(1/k)*Math.tan(Math.atan(k)*(2*(x-0.5)))+0.5;
     }
 
@@ -213,6 +210,8 @@ public class RecommendationImpl implements Recommendation {
 
             RecommendedResult result = new RecommendedResult();
 
+            result.setSchoolId(schoolMajor.getSchoolId());
+            result.setMajorId(schoolMajor.getMajorId());
             result.setSchoolInfo(new SimpleSchool(
                     schoolMapper.findOneBySchoolId(String.valueOf(schoolMajor.getSchoolId()))));
             result.setMajorCode(String.valueOf(schoolMajor.getMajorId()));
@@ -237,7 +236,7 @@ public class RecommendationImpl implements Recommendation {
                 highRisk.add(result);
             } else if (result.getAdmissionProbability() >= 0.5 && result.getAdmissionProbability() < 0.8) {
                 mediumRisk.add(result);
-            } else if (result.getAdmissionProbability() >= 0.8 /*&& result.getAdmissionProbability() < 1.08*/) {
+            } else if (result.getAdmissionProbability() >= 0.8 /*&& result.getAdmissionProbability() < 1.0*/) {
                 lowRisk.add(result);
             }
         }
@@ -252,7 +251,7 @@ public class RecommendationImpl implements Recommendation {
     @Cacheable("SchoolAdmissionProbability")
     public List<MajorAdmission> calculateSchoolAdmissionProbability(Integer schoolId, StudentInfo studentInfo) {
         List<Admission> admissions = admissionMapper.findBySchoolIdAndProvinceId(
-                schoolId, Province.getIdByName(studentInfo.getProvince()));
+                schoolId, studentInfo.getProvinceId());
         Map<SchoolMajor, List<SimpleAdmission>> admissionsMap = wrapAdmissions(admissions, studentInfo);
 
         List<MajorAdmission> majorAdmissions = new ArrayList<>();
