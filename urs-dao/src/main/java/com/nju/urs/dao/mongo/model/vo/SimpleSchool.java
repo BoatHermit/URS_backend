@@ -16,6 +16,7 @@ public class SimpleSchool implements Serializable {
     private String f985;
     private String f211;
     private String dualClassName;
+    private String belong;
 
     public SimpleSchool(School school) {
         if (school != null) {
@@ -28,6 +29,7 @@ public class SimpleSchool implements Serializable {
             f985 = school.getF985();
             f211 = school.getF211();
             dualClassName = school.getDualClassName();
+            belong = school.getBelong();
         }
     }
 }

@@ -3,8 +3,6 @@ spring:
     name: urs-dao
   profiles:
     active: dev
-  cache:
-    type: redis
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
