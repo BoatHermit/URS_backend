@@ -9,10 +9,10 @@ public class MajorConditions {
     private String level2Name;
     private String level3Name;
     public static Major wrapConditions(MajorConditions conditions) {
-        Major major = new Major();
         if (conditions == null) {
-            return major;
+            return null;
         }
+        Major major = new Major();
         major.setLevel1Name(conditions.getLevel1Name());
         major.setLevel2Name(conditions.getLevel2Name());
         major.setLevel3Name(conditions.getLevel3Name());

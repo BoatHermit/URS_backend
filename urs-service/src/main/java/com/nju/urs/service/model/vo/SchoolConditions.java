@@ -20,8 +20,8 @@ public class SchoolConditions {
     // 教育部
     private String belong;
     public static School wrapConditions(SchoolConditions conditions) {
+        if (conditions == null) return null;
         School school = new School();
-        if (conditions == null) return school;
         school.setProvinceName(conditions.getProvinceName());
         school.setTypeName(conditions.getTypeName());
         school.setLevelName(conditions.getLevelName());

@@ -29,28 +29,40 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
         if (conditions != null) {
             if (conditions.getProvinceName() != null && !conditions.getProvinceName().isEmpty()) {
                 String[] provinces = conditions.getProvinceName().split(" ");
-                List<Criteria> criteriaList = new ArrayList<>();
-                for (String province : provinces) {
-                    criteriaList.add(Criteria.where("province_name").is(province));
+                if (provinces.length > 1) {
+                    List<Criteria> criteriaList = new ArrayList<>();
+                    for (String province : provinces) {
+                        criteriaList.add(Criteria.where("province_name").is(province));
+                    }
+                    andCriteriaList.add(new Criteria().orOperator(criteriaList));
+                } else {
+                    andCriteriaList.add(Criteria.where("province_name").is(conditions.getProvinceName()));
                 }
-                andCriteriaList.add(new Criteria().orOperator(criteriaList));
             }
             if (conditions.getTypeName() != null && !conditions.getTypeName().isEmpty()) {
                 String[] types = conditions.getTypeName().split(" ");
-                List<Criteria> criteriaList = new ArrayList<>();
-                for (String type : types) {
-                    criteriaList.add(Criteria.where("type_name").regex(
-                            "^"+type+".*"));
+                if (types.length > 1) {
+                    List<Criteria> criteriaList = new ArrayList<>();
+                    for (String type : types) {
+                        criteriaList.add(Criteria.where("type_name").regex(
+                                "^"+type+".*"));
+                    }
+                    andCriteriaList.add(new Criteria().orOperator(criteriaList));
+                } else {
+                    andCriteriaList.add(Criteria.where("type_name").regex("^"+conditions.getTypeName()+".*"));
                 }
-                andCriteriaList.add(new Criteria().orOperator(criteriaList));
             }
             if (conditions.getNatureName() != null && !conditions.getNatureName().isEmpty()) {
                 String[] natureNames = conditions.getNatureName().split(" ");
-                List<Criteria> criteriaList = new ArrayList<>();
-                for (String natureName : natureNames) {
-                    criteriaList.add(Criteria.where("nature_name").is(natureName));
+                if (natureNames.length > 1) {
+                    List<Criteria> criteriaList = new ArrayList<>();
+                    for (String natureName : natureNames) {
+                        criteriaList.add(Criteria.where("nature_name").is(natureName));
+                    }
+                    andCriteriaList.add(new Criteria().orOperator(criteriaList));
+                } else {
+                    andCriteriaList.add(Criteria.where("nature_name").is(conditions.getNatureName()));
                 }
-                andCriteriaList.add(new Criteria().orOperator(criteriaList));
             }
 
             QueryUtils.addCondition(query, "level_name", conditions.getLevelName());
@@ -80,7 +92,11 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
             );
             andCriteriaList.add(criteria);
         }
-        query.addCriteria(new Criteria().andOperator(andCriteriaList));
+        if (andCriteriaList.size() > 1) {
+            query.addCriteria(new Criteria().andOperator(andCriteriaList));
+        } else if (andCriteriaList.size() == 1) {
+            query.addCriteria(andCriteriaList.get(0));
+        }
 
         return query;
     }
