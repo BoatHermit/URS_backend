@@ -78,7 +78,7 @@ public class CustomizedSchoolMapperImpl implements CustomizedSchoolMapper {
             Criteria criteria = new Criteria().orOperator(
                     Criteria.where("school_name").regex(regex, "i")
             );
-            query.addCriteria(criteria);
+            andCriteriaList.add(criteria);
         }
         query.addCriteria(new Criteria().andOperator(andCriteriaList));
 

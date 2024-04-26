@@ -22,7 +22,7 @@ public class AdmissionController {
     }
 
     @Log(module = "录取", operation = "计算某学校所有专业录取概率")
-    @GetMapping("/probability")
+    @RequestMapping("/probability")
     public Result filter(@RequestBody SchoolAdmissionParam param) {
         return Result.success(admissionService.schoolAdmission(param));
     }

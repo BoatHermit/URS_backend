@@ -27,13 +27,13 @@ public class SchoolController {
     }
 
     @Log(module = "大学", operation = "根据条件筛选大学（结果分页）")
-    @GetMapping("/filter")
+    @RequestMapping("/filter")
     public Result filter(@RequestBody SchoolFilterParam param) {
         return Result.success(schoolService.getSchoolsByConditions(param));
     }
 
     @Log(module = "大学", operation = "根据条件筛选大学的总页数")
-    @GetMapping("/filter/count")
+    @RequestMapping("/filter/count")
     public Result filterCount(@RequestBody SchoolFilterParam param) {
         return Result.success(schoolService.countPagesByConditions(param));
     }

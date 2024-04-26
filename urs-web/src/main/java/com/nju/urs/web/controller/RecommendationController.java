@@ -27,19 +27,19 @@ public class RecommendationController {
     }
 
     @Log(module = "推荐", operation = "获取高风险推荐学校专业")
-    @GetMapping("/highrisk")
+    @RequestMapping("/highrisk")
     public Result getHighRisk(@RequestBody RecommendParam param) {
         return Result.success(admissionService.recommendHighRisk(param));
     }
 
     @Log(module = "推荐", operation = "获取中风险推荐学校专业")
-    @GetMapping("/midrisk")
+    @RequestMapping("/midrisk")
     public Result getMidRisk(@RequestBody RecommendParam param) {
         return Result.success(admissionService.recommendMidRisk(param));
     }
 
     @Log(module = "推荐", operation = "获取低风险推荐学校专业")
-    @GetMapping("/lowrisk")
+    @RequestMapping("/lowrisk")
     public Result getLowRisk(@RequestBody RecommendParam param) {
         return Result.success(admissionService.recommendLowRisk(param));
     }

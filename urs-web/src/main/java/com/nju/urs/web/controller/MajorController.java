@@ -19,13 +19,13 @@ public class MajorController {
     }
 
     @Log(module = "专业", operation = "根据条件筛选专业（结果分页）")
-    @GetMapping("/filter")
+    @RequestMapping("/filter")
     public Result filter(@RequestBody MajorFilterParam param) {
         return Result.success(majorService.getMajorsByConditions(param));
     }
 
     @Log(module = "专业", operation = "根据条件筛选专业的总页数")
-    @GetMapping("/filter/count")
+    @RequestMapping("/filter/count")
     public Result filterCount(@RequestBody MajorFilterParam param) {
         return Result.success(majorService.countPagesByConditions(param));
     }
@@ -36,11 +36,11 @@ public class MajorController {
         return Result.success(majorService.getMajorByCode(code));
     }
 
-    @GetMapping("/search")
+    @RequestMapping("/search")
     public Result search(@RequestBody MajorSearchParam param) {
         return Result.success(majorService.getMajorsByKeyword(param));
     }
-    @GetMapping("/search/count")
+    @RequestMapping("/search/count")
     public Result searchCount(@RequestBody MajorSearchParam param) {
         return Result.success(majorService.countPagesByKeyword(param));
     }
