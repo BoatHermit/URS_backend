@@ -27,7 +27,10 @@ public class CustomizedMajorMapperImpl implements CustomizedMajorMapper {
     @Override
     public Integer countByKeyword(String keyword) {
         Query query = new Query();
-        query.addCriteria(getSearchCriteria(keyword));
+        Criteria searchCriteria = getSearchCriteria(keyword);
+        if (searchCriteria != null) {
+            query.addCriteria(searchCriteria);
+        }
 
         return (int) mongoTemplate.count(query, Major.class);
     }
@@ -39,18 +42,25 @@ public class CustomizedMajorMapperImpl implements CustomizedMajorMapper {
             QueryUtils.addCondition(query, "level2_name", conditions.getLevel2Name());
             QueryUtils.addCondition(query, "level3_name", conditions.getLevel3Name());
         }
-        query.addCriteria(getSearchCriteria(keyword));
+        Criteria searchCriteria = getSearchCriteria(keyword);
+        if (searchCriteria != null) {
+            query.addCriteria(searchCriteria);
+        }
         return query;
     }
 
     private Criteria getSearchCriteria(String keyword) {
         String regex = QueryUtils.getFuzzyRegex(keyword);
-        return new Criteria().orOperator(
-                Criteria.where("name").regex(regex, "i"),
-                Criteria.where("level1_name").regex(regex, "i"),
-                Criteria.where("level2_name").regex(regex, "i"),
-                Criteria.where("level3_name").regex(regex, "i")
-        );
+        if (regex != null) {
+            return new Criteria().orOperator(
+                    Criteria.where("name").regex(regex, "i"),
+                    Criteria.where("level1_name").regex(regex, "i"),
+                    Criteria.where("level2_name").regex(regex, "i"),
+                    Criteria.where("level3_name").regex(regex, "i")
+            );
+        } else {
+            return null;
+        }
     }
 
     @Override

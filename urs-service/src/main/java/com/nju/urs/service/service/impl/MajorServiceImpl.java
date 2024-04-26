@@ -59,17 +59,9 @@ public class MajorServiceImpl implements MajorService {
         return (int) Math.ceil(num / param.getPageSize());
     }
 
-    private Major wrapConditions(MajorConditions conditions) {
-        Major major = new Major();
-        major.setLevel1Name(conditions.getLevel1Name());
-        major.setLevel2Name(conditions.getLevel2Name());
-        major.setLevel3Name(conditions.getLevel3Name());
-        return major;
-    }
-
     @Override
     public List<SimpleMajor> getMajorsByConditions(MajorFilterParam param) {
-        Major queryMajor = wrapConditions(param.getConditions());
+        Major queryMajor = MajorConditions.wrapConditions(param.getConditions());
         List<Major> majors = majorMapper.findByConditions(
                 param.getPageNo(),param.getPageSize(), queryMajor, param.getKeyword());
         List<SimpleMajor> simpleMajors = new ArrayList<>();
@@ -82,7 +74,7 @@ public class MajorServiceImpl implements MajorService {
 
     @Override
     public Integer countPagesByConditions(MajorFilterParam param) {
-        Major queryMajor = wrapConditions(param.getConditions());
+        Major queryMajor = MajorConditions.wrapConditions(param.getConditions());
         double num = majorMapper.countByConditions(queryMajor, param.getKeyword());
         return (int) Math.ceil(num / param.getPageSize());
     }

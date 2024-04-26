@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 public class QueryUtils {
     public static String getFuzzyRegex(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {return null;}
         StringBuilder regex = new StringBuilder("(?:");
         String[] strings = keyword.split(" ");
         for (String string : strings) {
