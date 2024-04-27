@@ -40,8 +40,21 @@ public class RecommendationImpl implements Recommendation {
     }
 
 
-    private boolean checkSubjects(String subjects, String requirement) {
+    private boolean checkSubjects(String subjects, SchoolMajor schoolMajor) {
         boolean result = true;
+        StringBuilder  requirement = new StringBuilder(schoolMajor.getRequirement());
+        int subject = schoolMajor.getSubject();
+        if (subject == 1) {
+            requirement.setCharAt(0, '1');
+        } else if (subject == 2) {
+            requirement.setCharAt(0, '2');
+        } else if (subject == 3) {
+            requirement = new StringBuilder("111000");
+        } else if (subject == 4) {
+            requirement = new StringBuilder("000111");
+        } else if (subject == 5) {
+            requirement = new StringBuilder("000000");
+        }
         for (int i = 0; i < subjects.length(); i++) {
             if (requirement.charAt(i) == '1' && subjects.charAt(i) == '0') {
                 result = false;
@@ -56,7 +69,7 @@ public class RecommendationImpl implements Recommendation {
 
         for (Admission admission : admissions) {
             SchoolMajor schoolMajor = schoolMajorMapper.findById(admission.getSchoolMajorId());
-            if (schoolMajor != null && checkSubjects(studentInfo.getSubjects(), schoolMajor.getRequirement())) {
+            if (schoolMajor != null && checkSubjects(studentInfo.getSubjects(), schoolMajor)) {
                 if (!map.containsKey(schoolMajor)) {
                     List<SimpleAdmission> simpleAdmissions = new ArrayList<>();
                     map.put(schoolMajor, simpleAdmissions);
@@ -80,8 +93,7 @@ public class RecommendationImpl implements Recommendation {
             List<SimpleAdmission> admissionList = entry.getValue();
             boolean shouldRemove = true;
             for (SimpleAdmission admission : admissionList) {
-                if (Math.abs(admission.getRank()-studentInfo.getRank()) < 5000
-                        || Math.abs(admission.getScore() - studentInfo.getScore()) < 100) {
+                if (admission.getRank() > 0 && Math.abs(admission.getRank()-studentInfo.getRank()) < 5000) {
                     shouldRemove = false;
                     break;
                 }
@@ -187,15 +199,32 @@ public class RecommendationImpl implements Recommendation {
             return calculateProbabilityByND(ranks, studentRank);
         } else if (ranks.size() == 1) {
             int rank = ranks.get(0).intValue();
-            if (studentRank<rank*0.9) {
+            if (studentRank < rank*0.5) {
+                return 1.0;
+            } else if (studentRank < rank*0.6 && studentRank >= rank*0.5) {
+                return 0.9;
+            } else if (studentRank < rank*0.7 && studentRank >= rank*0.6) {
                 return 0.8;
-            } else if (studentRank>rank*1.1) {
-                return 0.2;
-            } else {
+            } else if (studentRank < rank*0.8 && studentRank >= rank*0.7) {
+                return 0.7;
+            } else if (studentRank < rank*0.9 && studentRank >= rank*0.8) {
+                return 0.6;
+            } else if (studentRank < rank*1.0 && studentRank >= rank*0.9) {
                 return 0.5;
+            } else if (studentRank < rank*1.1 && studentRank >= rank*1.0) {
+                return 0.4;
+            } else if (studentRank < rank*1.2 && studentRank >= rank*1.1) {
+                return 0.3;
+            } else if (studentRank < rank*1.3 && studentRank >= rank*1.2) {
+                return 0.2;
+            } else if (studentRank < rank*1.4 && studentRank >= rank*1.3) {
+                return 0.1;
+            } else {
+                return 0;
             }
+        } else {
+            return -1;
         }
-        return 0;
     }
 
     @Override
@@ -208,17 +237,19 @@ public class RecommendationImpl implements Recommendation {
 
             double admissionProbability = calculateProbability(admissions, studentInfo.getRank());
 
-            RecommendedResult result = new RecommendedResult();
+            if (admissionProbability > 0) {
+                RecommendedResult result = new RecommendedResult();
 
-            result.setSchoolId(schoolMajor.getSchoolId());
-            result.setMajorId(schoolMajor.getMajorId());
-            result.setSchoolInfo(new SimpleSchool(
-                    schoolMapper.findOneBySchoolId(String.valueOf(schoolMajor.getSchoolId()))));
-            result.setMajorCode(String.valueOf(schoolMajor.getMajorId()));
-            result.setMajorName(schoolMajor.getMajorName());
-            result.setAdmissionProbability(admissionProbability);
-            result.setAdmissions(admissions);
-            results.add(result);
+                result.setSchoolId(schoolMajor.getSchoolId());
+                result.setMajorId(schoolMajor.getMajorId());
+                result.setSchoolInfo(new SimpleSchool(
+                        schoolMapper.findOneBySchoolId(String.valueOf(schoolMajor.getSchoolId()))));
+                result.setMajorCode(String.valueOf(schoolMajor.getMajorId()));
+                result.setMajorName(schoolMajor.getMajorName());
+                result.setAdmissionProbability(admissionProbability);
+                result.setAdmissions(admissions);
+                results.add(result);
+            }
         }
         return results;
     }
