@@ -1,5 +1,6 @@
 package com.nju.urs.recommendation.service.impl;
 
+import com.nju.urs.common.annotation.DoubleCache;
 import com.nju.urs.common.enums.Province;
 import com.nju.urs.dao.mongo.mapper.SchoolMapper;
 import com.nju.urs.dao.mongo.model.vo.SimpleSchool;
@@ -13,7 +14,6 @@ import com.nju.urs.dao.mysql.model.po.SchoolMajor;
 import com.nju.urs.recommendation.service.Recommendation;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -255,7 +255,7 @@ public class RecommendationImpl implements Recommendation {
     }
 
     @Override
-    @Cacheable("RecommendedResults")
+    @DoubleCache(cacheName = "RecommendedResults", key = "#studentInfo")
     public RecommendedResults recommend(StudentInfo studentInfo) {
         List<RecommendedResult> results = allRecommend(studentInfo);
         RecommendedResults recommendedResults = new RecommendedResults();
@@ -279,7 +279,7 @@ public class RecommendationImpl implements Recommendation {
     }
 
     @Override
-    @Cacheable("SchoolAdmissionProbability")
+    @DoubleCache(cacheName = "SchoolAdmissionProbability", key = "#schoolId,#studentInfo")
     public List<MajorAdmission> calculateSchoolAdmissionProbability(Integer schoolId, StudentInfo studentInfo) {
         List<Admission> admissions = admissionMapper.findBySchoolIdAndProvinceId(
                 schoolId, Province.getIdByName(studentInfo.getProvince()));
