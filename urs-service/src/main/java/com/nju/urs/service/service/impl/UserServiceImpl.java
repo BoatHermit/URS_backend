@@ -2,14 +2,12 @@ package com.nju.urs.service.service.impl;
 
 import com.nju.urs.common.utils.JwtUtils;
 import com.nju.urs.common.utils.MD5;
-import com.nju.urs.common.utils.Result;
 import com.nju.urs.service.service.UserService;
 import com.nju.urs.user.po.UserPO;
 import com.nju.urs.user.repository.UserRepository;
 import com.nju.urs.user.vo.LoginVO;
 import com.nju.urs.user.vo.RegisterVO;
 import com.nju.urs.user.vo.UserVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,11 +16,11 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
-    //todo
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -48,10 +46,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(RegisterVO registerVO){
-        Optional<UserPO> user = userRepository.findByNameAndPassword(registerVO.getName(), MD5.encrypt(registerVO.getPwd()));
+    public int register(RegisterVO registerVO){
+        String phoneNumber=registerVO.getPhone();
+        if(!isValidPhoneNumber(phoneNumber)){
+            return 3;
+        }
+
+        Optional<UserPO> user0=userRepository.findByPhone(registerVO.getPhone());
+        if(!user0.isPresent()){
+            return 1;
+        }
+        Optional<UserPO> user = userRepository.findByPhoneAndPassword(registerVO.getPhone(), MD5.encrypt(registerVO.getPwd()));
         if (!user.isPresent()) {
             userRepository.insert(UserSession.UserPO(registerVO));
+            return 0;
+        }else{
+            return 2;
         }
     }
 
@@ -77,14 +87,22 @@ public class UserServiceImpl implements UserService {
     }
 
     private static String[] getRes(UserVO userVO) {
-        String name = userVO.getName();
+        String phone = userVO.getPhone();
         String pwd = userVO.getPassword();
-        String token = JwtUtils.getJwtToken(name, pwd);
+        String token = JwtUtils.getJwtToken(phone, pwd);
         String[] res = new String[2];
         res[0] = token;
-        res[1] = name;
+        res[1] = phone;
         return res;
     }
+
+    public static boolean isValidPhoneNumber(String phoneNumber) {
+        if ((phoneNumber != null) && (!phoneNumber.isEmpty())) {
+            return Pattern.matches("^1[3-9]\\d{9}$", phoneNumber);
+        }
+        return false;
+    }
+
 
 }
 

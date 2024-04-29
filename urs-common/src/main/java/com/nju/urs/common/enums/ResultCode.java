@@ -24,6 +24,8 @@ public enum ResultCode {
     ACCOUNT_PWD_NOT_EXIST(10002,"用户名或密码错误"),
     ACCOUNT_EXIST(10004,"账号已存在"),
     LOGIN_FAIL(10003,"登陆失败"),
+    LOGIN_SUCCESS(10005,"登陆成功"),
+    REGISTER_SUCCESS(10006,"注册成功"),
 
     NO_PERMISSION(70001,"无访问权限"),
     SESSION_TIME_OUT(90001,"会话超时"),
