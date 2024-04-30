@@ -251,6 +251,7 @@ public class RecommendationImpl implements Recommendation {
                 results.add(result);
             }
         }
+        results.sort(Comparator.comparingDouble(RecommendedResult::getAdmissionProbability));
         return results;
     }
 
@@ -263,11 +264,11 @@ public class RecommendationImpl implements Recommendation {
         List<RecommendedResult> mediumRisk = new ArrayList<>();
         List<RecommendedResult> lowRisk = new ArrayList<>();
         for (RecommendedResult result : results) {
-            if (result.getAdmissionProbability() < 0.5 /*&& result.getAdmissionProbability() >= 0.2*/) {
+            if (result.getAdmissionProbability() < 0.5 && result.getAdmissionProbability() >= 0.2) {
                 highRisk.add(result);
             } else if (result.getAdmissionProbability() >= 0.5 && result.getAdmissionProbability() < 0.8) {
                 mediumRisk.add(result);
-            } else if (result.getAdmissionProbability() >= 0.8 /*&& result.getAdmissionProbability() < 1.0*/) {
+            } else if (result.getAdmissionProbability() >= 0.8 && result.getAdmissionProbability() < 1.0) {
                 lowRisk.add(result);
             }
         }
