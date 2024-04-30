@@ -7,11 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-//@Mapper
 public interface UserRepository extends MongoRepository<UserPO, String> {
     Optional<UserPO> findByNameAndPassword(String name,String password);
 
-    Optional<UserPO> findByPhoneAndPassword(String phoneNumber, String password);
-    Optional<UserPO> findByPhone(String phoneNumber);
+    Optional<UserPO> findByPhoneAndPassword(String phone, String password);
+    Optional<UserPO> findByPhone(String phone);
     Optional<UserPO> findByName(String name);
 }

@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
         Optional<UserPO> user0=userRepository.findByPhone(registerVO.getPhone());
-        if(!user0.isPresent()){
+        if(user0.isPresent()){
             return 1;
         }
         Optional<UserPO> user = userRepository.findByPhoneAndPassword(registerVO.getPhone(), MD5.encrypt(registerVO.getPwd()));
@@ -75,6 +75,8 @@ public class UserServiceImpl implements UserService {
     public UserVO update(UserVO userVO){
         UserPO user = UserSession.UserPO(userVO);
         Query query = Query.query(Criteria.where("_id").is(user.getId()));
+        System.out.println(user.getId());
+
         Update update = new Update();
         update.set("phone", user.getPhone());
         update.set("name", user.getName());

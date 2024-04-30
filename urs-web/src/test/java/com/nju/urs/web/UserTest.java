@@ -71,7 +71,7 @@ public class UserTest {
     public void update(){
         UserVO userVO=new UserVO();
         userVO.setName("test");
-        userVO.setPassword("123@456");
+        userVO.setPassword("13844526687");
         userVO.setPlace("江苏");
         userVO.setRank(1000);
         userVO.setScore(655);
@@ -87,6 +87,7 @@ public class UserTest {
     @Test
     public void getInfo(){
         UserVO userVO=userService.getUserInfo("13844526689");
+        System.out.println(userVO.getPhone());
         Assert.assertEquals("Test",userVO.getName());
         Assert.assertEquals("江苏",userVO.getPlace());
     }

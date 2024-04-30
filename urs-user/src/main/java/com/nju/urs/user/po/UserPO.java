@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class UserPO {
     //主键
     @Indexed
-    @Field("uid")
+    @Field("_id")
     String id;
     @Field
     String name;
