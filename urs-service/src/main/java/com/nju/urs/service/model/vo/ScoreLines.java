@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScoreLines {
-    private List<String> provinces;
     private List<Integer> scores;
     private List<Integer> rank;
     private List<Integer> year;

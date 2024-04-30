@@ -7,6 +7,6 @@ import lombok.Data;
 public class SchoolAdmissionParam {
     private Integer pageNo;
     private Integer pageSize;
-    private String SchoolId;
+    private Integer SchoolId;
     private StudentInfo studentInfo;
 }

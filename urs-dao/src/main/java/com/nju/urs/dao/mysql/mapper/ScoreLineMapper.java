@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ScoreLineMapper extends BaseMapper<ScoreLine> {
-    List<ScoreLine> findBySchoolIdAndProvinceNameAndSubject(String schoolId, String province, int subject);
+    List<ScoreLine> findBySchoolIdAndProvinceNameAndSubject(int schoolId, int province, int subject);
     List<ScoreLine> findBySchoolId(String schoolId);
 }

@@ -241,10 +241,10 @@ public class RecommendationImpl implements Recommendation {
                 RecommendedResult result = new RecommendedResult();
 
                 result.setSchoolId(schoolMajor.getSchoolId());
-                result.setMajorId(schoolMajor.getMajorId());
                 result.setSchoolInfo(new SimpleSchool(
                         schoolMapper.findOneBySchoolId(String.valueOf(schoolMajor.getSchoolId()))));
-                result.setMajorCode(String.valueOf(schoolMajor.getMajorId()));
+                result.setMajorId(schoolMajor.getMajorId());
+                result.setMajorCode(schoolMajor.getMajorCode());
                 result.setMajorName(schoolMajor.getMajorName());
                 result.setAdmissionProbability(admissionProbability);
                 result.setAdmissions(admissions);
@@ -288,7 +288,7 @@ public class RecommendationImpl implements Recommendation {
         List<MajorAdmission> majorAdmissions = new ArrayList<>();
         admissionsMap.forEach((k, v) -> {
             MajorAdmission majorAdmission = new MajorAdmission();
-            majorAdmission.setMajorCode(String.valueOf(k.getMajorId()));
+            majorAdmission.setMajorCode(String.valueOf(k.getMajorCode()));
             majorAdmission.setMajorName(k.getMajorName());
             majorAdmission.setAdmissions(v);
             majorAdmission.setAdmissionProbability(calculateProbability(v, studentInfo.getRank()));

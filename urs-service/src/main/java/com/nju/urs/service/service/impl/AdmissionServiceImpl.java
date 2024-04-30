@@ -120,7 +120,7 @@ public class AdmissionServiceImpl implements AdmissionService {
     @Override
     public SchoolAdmissionPage schoolAdmission(SchoolAdmissionParam param) {
         List<MajorAdmission> list = recommendation.calculateSchoolAdmissionProbability(
-                Integer.valueOf(param.getSchoolId()), param.getStudentInfo());
+                param.getSchoolId(), param.getStudentInfo());
         if (param.getPageNo() != null && param.getPageSize() != null) {
             Pageable pageable = PageRequest.of(param.getPageNo()-1, param.getPageSize());
             // 对缓存中的数据进行分页操作
@@ -141,24 +141,21 @@ public class AdmissionServiceImpl implements AdmissionService {
     }
 
     @Override
-    public ScoreLines getScoreLines(String schoolId, String province, int subject) {
+    public ScoreLines getScoreLines(int schoolId, String province, int subject) {
         List<ScoreLine> scoreLineList;
+        scoreLineList = scoreLineMapper.findBySchoolIdAndProvinceNameAndSubject(
+                schoolId, Province.getIdByName(province), subject);
 
-        scoreLineList = scoreLineMapper.findBySchoolIdAndProvinceNameAndSubject(schoolId, province, subject);
-
-
-        List<String> provinces = new ArrayList<>();
         List<Integer> scores = new ArrayList<>();
         List<Integer> ranks = new ArrayList<>();
         List<Integer> years = new ArrayList<>();
         scoreLineList.sort(Comparator.comparingInt(ScoreLine::getYear));
 
         for (ScoreLine scoreLine : scoreLineList) {
-            provinces.add(Province.getNameById(scoreLine.getProvinceId()));
             scores.add(scoreLine.getScore());
-            ranks.add(scoreLine.getMinRank());
+            ranks.add(scoreLine.getRank());
             years.add(scoreLine.getYear());
         }
-        return new ScoreLines(provinces, scores, ranks, years);
+        return new ScoreLines(scores, ranks, years);
     }
 }

@@ -11,5 +11,5 @@ public class ScoreLine {
     private Integer subject;
     private Integer year;
     private Integer score;
-    private Integer minRank;
+    private Integer rank;
 }

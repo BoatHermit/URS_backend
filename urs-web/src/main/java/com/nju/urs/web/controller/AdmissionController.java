@@ -27,8 +27,9 @@ public class AdmissionController {
         return Result.success(admissionService.schoolAdmission(param));
     }
 
+    @Log(module = "录取", operation = "获取某学校在某省份某个选课情况的分数线")
     @GetMapping("/scoreline")
-    public Result getScoreLine(String schoolId, String province, Integer subject) {
+    public Result getScoreLine(Integer schoolId, String province, Integer subject) {
         return Result.success(admissionService.getScoreLines(schoolId, province, subject));
     }
 }
