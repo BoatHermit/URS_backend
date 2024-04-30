@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    //todo
     @Autowired
     private UserService userService;
 
@@ -25,14 +24,21 @@ public class UserController {
         if(res==null){
             return Result.fail(ResultCode.LOGIN_FAIL);
         }else{
-            return Result.success();
+            return Result.success(ResultCode.LOGIN_SUCCESS);
         }
     }
 
     @PostMapping("/register")
     public Result register(@RequestBody RegisterVO registerVO){
-        userService.register(registerVO);
-        return Result.success();
+        int res=userService.register(registerVO);
+        if(res==0){
+            return Result.success(ResultCode.REGISTER_SUCCESS);
+        }else if (res==3){
+            return Result.fail(10007,"非法手机号");
+        }else{
+            return Result.fail(ResultCode.ACCOUNT_EXIST);
+        }
+
     }
 
     @GetMapping("/getUserInfo")
