@@ -16,12 +16,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class UserPO {
     //主键
     @Indexed
-    @Field("_id")
-    String id;
-    @Field
-    String name;
     @Field("phone")
     String phone;
+    @Field("name")
+    String name;
+
     @Field("password")
     String password;
     @Field("place")

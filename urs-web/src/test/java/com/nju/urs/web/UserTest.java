@@ -70,6 +70,7 @@ public class UserTest {
     @Test
     public void update(){
         UserVO userVO=new UserVO();
+        userVO.setPhone("13844526687");
         userVO.setName("test");
         userVO.setPassword("13844526687");
         userVO.setPlace("江苏");
@@ -77,8 +78,8 @@ public class UserTest {
         userVO.setScore(655);
         userService.update(userVO);
 
-        UserVO userVO1=userService.getUserInfo("13844526689");
-        userVO.setPassword(MD5.encrypt(userVO1.getPassword()));
+        UserVO userVO1=userService.getUserInfo("13844526687");
+        userVO.setPassword(MD5.encrypt(userVO.getPassword()));
 
         Assert.assertEquals(userVO1,userVO);
     }
@@ -86,9 +87,8 @@ public class UserTest {
     //获取用户数据
     @Test
     public void getInfo(){
-        UserVO userVO=userService.getUserInfo("13844526689");
-        System.out.println(userVO.getPhone());
-        Assert.assertEquals("Test",userVO.getName());
+        UserVO userVO=userService.getUserInfo("13844526687");
+        Assert.assertEquals("test",userVO.getName());
         Assert.assertEquals("江苏",userVO.getPlace());
     }
 

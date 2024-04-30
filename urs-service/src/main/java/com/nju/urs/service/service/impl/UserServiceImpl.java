@@ -74,8 +74,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO update(UserVO userVO){
         UserPO user = UserSession.UserPO(userVO);
-        Query query = Query.query(Criteria.where("_id").is(user.getId()));
-        System.out.println(user.getId());
+        Query query = Query.query(Criteria.where("phone").is(user.getPhone()));
 
         Update update = new Update();
         update.set("phone", user.getPhone());

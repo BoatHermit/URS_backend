@@ -28,7 +28,7 @@ public class AdmissionTest {
 
         param.setPageNo(1);
         param.setPageSize(20);
-        param.setSchoolId("111");
+        param.setSchoolId(111);
         param.setStudentInfo(studentInfo);
 
         SchoolAdmissionPage res=admissionService.schoolAdmission(param);
