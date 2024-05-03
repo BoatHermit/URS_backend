@@ -266,9 +266,9 @@ public class RecommendationImpl implements Recommendation {
         for (RecommendedResult result : results) {
             if (result.getAdmissionProbability() < 0.5 && result.getAdmissionProbability() >= 0.2) {
                 highRisk.add(result);
-            } else if (result.getAdmissionProbability() >= 0.5 && result.getAdmissionProbability() < 0.8) {
+            } else if (result.getAdmissionProbability() >= 0.5 && result.getAdmissionProbability() < 0.7) {
                 mediumRisk.add(result);
-            } else if (result.getAdmissionProbability() >= 0.8 && result.getAdmissionProbability() < 1.0) {
+            } else if (result.getAdmissionProbability() >= 0.7 && result.getAdmissionProbability() < 1.0) {
                 lowRisk.add(result);
             }
         }

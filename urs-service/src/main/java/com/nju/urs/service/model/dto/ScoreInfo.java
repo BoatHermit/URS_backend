@@ -14,6 +14,7 @@ import java.util.List;
 public class ScoreInfo {
     private String score;
     private String num;
+    private String total;
     private String rankRange;
     private String batchName;
     private String controlScore;
@@ -22,6 +23,7 @@ public class ScoreInfo {
     public ScoreInfo(ScoreInner scoreInner) {
         this.score = scoreInner.getScore();
         this.num = scoreInner.getNum();
+        this.total = scoreInner.getTotal();
         this.rankRange = scoreInner.getRankRange();
         this.batchName = scoreInner.getBatchName();
         this.controlScore = scoreInner.getControlScore();
