@@ -1,5 +1,6 @@
 package com.nju.urs.web.controller;
 
+import com.nju.urs.common.annotation.Log;
 import com.nju.urs.common.enums.ResultCode;
 import com.nju.urs.common.utils.JwtUtils;
 import com.nju.urs.common.utils.Result;
@@ -18,6 +19,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Log(module = "用户", operation = "登录")
     @PostMapping("/login")
     public Result login(@RequestBody LoginVO loginVO){
         String[] res=userService.login(loginVO);
@@ -28,6 +30,7 @@ public class UserController {
         }
     }
 
+    @Log(module = "用户", operation = "注册")
     @PostMapping("/register")
     public Result register(@RequestBody RegisterVO registerVO){
         int res=userService.register(registerVO);
@@ -41,6 +44,7 @@ public class UserController {
 
     }
 
+    @Log(module = "用户", operation = "获取用户信息")
     @GetMapping("/getUserInfo")
     public Result getUserInfo(HttpServletRequest request){
         String userPhone=JwtUtils.getCheckPhoneByJwtToken(request);
@@ -52,6 +56,7 @@ public class UserController {
         }
     }
 
+    @Log(module = "用户", operation = "更新用户信息")
     @PostMapping("/update")
     public Result update(@RequestBody UserVO userVO) {
         UserVO newUser = userService.update(userVO);

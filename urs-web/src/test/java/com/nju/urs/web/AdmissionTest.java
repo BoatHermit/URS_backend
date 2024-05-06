@@ -31,7 +31,7 @@ public class AdmissionTest {
         param.setSchoolId(111);
         param.setStudentInfo(studentInfo);
 
-        SchoolAdmissionPage res=admissionService.schoolAdmission(param);
+        SchoolAdmissionPage res=admissionService.getSchoolAdmissionProbability(param);
         Assert.assertNotNull(res);
     }
 }

@@ -118,7 +118,7 @@ public class AdmissionServiceImpl implements AdmissionService {
     }
 
     @Override
-    public SchoolAdmissionPage schoolAdmission(SchoolAdmissionParam param) {
+    public SchoolAdmissionPage getSchoolAdmissionProbability(SchoolAdmissionParam param) {
         List<MajorAdmission> list = recommendation.calculateSchoolAdmissionProbability(
                 param.getSchoolId(), param.getStudentInfo());
         if (param.getPageNo() != null && param.getPageSize() != null) {

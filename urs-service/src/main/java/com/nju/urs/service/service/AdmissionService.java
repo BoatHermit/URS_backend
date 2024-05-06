@@ -11,6 +11,6 @@ public interface AdmissionService {
     RecommendPage recommendHighRisk(RecommendParam param);
     RecommendPage recommendMidRisk(RecommendParam param);
     RecommendPage recommendLowRisk(RecommendParam param);
-    SchoolAdmissionPage schoolAdmission(SchoolAdmissionParam param);
+    SchoolAdmissionPage getSchoolAdmissionProbability(SchoolAdmissionParam param);
     ScoreLines getScoreLines(int schoolId, String province, int subject);
 }

@@ -2,7 +2,6 @@ package com.nju.urs.web.controller;
 
 import com.nju.urs.common.annotation.Log;
 import com.nju.urs.common.utils.Result;
-import com.nju.urs.service.model.param.MajorFilterParam;
 import com.nju.urs.service.model.param.SchoolAdmissionParam;
 import com.nju.urs.service.service.AdmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +22,13 @@ public class AdmissionController {
 
     @Log(module = "录取", operation = "计算某学校所有专业录取概率")
     @RequestMapping("/probability")
-    public Result filter(@RequestBody SchoolAdmissionParam param) {
-        return Result.success(admissionService.schoolAdmission(param));
+    public Result getSchoolAdmissionProbability(@RequestBody SchoolAdmissionParam param) {
+        return Result.success(admissionService.getSchoolAdmissionProbability(param));
     }
 
     @Log(module = "录取", operation = "获取某学校在某省份某个选课情况的分数线")
     @GetMapping("/scoreline")
-    public Result getScoreLine(Integer schoolId, String province, Integer subject) {
+    public Result getScoreLines(Integer schoolId, String province, Integer subject) {
         return Result.success(admissionService.getScoreLines(schoolId, province, subject));
     }
 }
